@@ -11,6 +11,6 @@ public class playerMovement : MonoBehaviour
     }
     void Update()
     {
-        mainBody.velocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        mainBody.velocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))*10;
     }
 }
