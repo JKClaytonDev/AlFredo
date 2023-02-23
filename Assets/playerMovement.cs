@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine;
 
 public class playerMovement : MonoBehaviour
@@ -11,6 +14,6 @@ public class playerMovement : MonoBehaviour
     }
     void Update()
     {
-        mainBody.velocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))*10;
+        mainBody.velocity = (Input.GetAxis("Horizontal") * new Vector3(1, 0, -1)) + (Input.GetAxis("Vertical") * new Vector3(1, 0, 1));
     }
 }
