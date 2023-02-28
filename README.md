@@ -29,8 +29,10 @@ If you die, you go to the spawn and drop a bag with all of your cooking items.
 In Detail Gameplay Setup 
 
 Planning Phase: 
+The player will get to view the map of rooms before each run. This will allow them to come up with a strategy for getting through each area. In this phase the player can also pick which weapons/items to use on the run. 
 
 Combat Phase: 
+The player will go through each area fighting enemies. The droppables will be used in the cooking recipes later on.
 
 Bossfight Phase: 
 
