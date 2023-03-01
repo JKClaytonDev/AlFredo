@@ -21,7 +21,10 @@ public class bossFightManager : MonoBehaviour
     {
         Time.timeScale = 0;
         if (health <= 0)
+        {
             Time.timeScale = 1;
+            Destroy(gameObject);
+        }
         keycodeText.text = "Press " + key.ToString() + " to stop";
         healthText.text = health + "/10";
         shrinkImage.transform.localScale = new Vector3(shrinkImage.transform.localScale.x - Time.unscaledDeltaTime/5, 1, 1);
