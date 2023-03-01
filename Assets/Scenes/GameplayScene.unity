@@ -518,7 +518,7 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0}
   spawnedPrefabs:
   - {fileID: 0}
-  mapSize: 5
+  mapSize: 25
   branchEnds:
   - {x: 0, y: 0, z: 0}
 --- !u!1 &1635090809
