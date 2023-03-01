@@ -1541,9 +1541,9 @@ MonoBehaviour:
   green: {fileID: 1901067894}
   stamina: {fileID: 246304244}
   health: {fileID: 1679041941}
-  redCount: 1
-  blueCount: 1
-  greenCount: 1
+  redCount: 20
+  blueCount: 20
+  greenCount: 20
   stepCount: 200
   boss1: {fileID: 208991980}
   boss2: {fileID: 1567219940}
