@@ -17,6 +17,7 @@ public class canvasManager : MonoBehaviour
     public GameObject boss1;
     public GameObject boss2;
     public GameObject boss3;
+    public GameObject winState;
     // Start is called before the first frame update
     public void startBosses()
     {
@@ -28,8 +29,16 @@ public class canvasManager : MonoBehaviour
             boss3.SetActive(true);
     }
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
+    
+    if (Input.GetKey(KeyCode.Escape)){
+            Application.Quit();
+        }
+        if (boss1 == null && boss2 == null && boss3 == null)
+        {
+            Time.timeScale = 0;
+            winState.SetActive(true);
+        }
         counter.text = "Time Left: " + Mathf.RoundToInt(stepCount);
         stepCount -= Time.deltaTime;
         red.text = ""+redCount;
