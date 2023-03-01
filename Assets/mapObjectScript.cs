@@ -19,6 +19,16 @@ public class mapObjectScript : MonoBehaviour
         for (int i = 0; i < enemies.Length; i++)
         {
             enemies[i].SetActive(Random.Range(0f, 1f) < probability);
+            string enemyType = "";
+            float enemyChoice = Random.Range(0, 3);
+            if (enemyChoice < 1)
+                enemyType = "Red";
+            else if (enemyChoice < 2)
+                enemyType = "Blue";
+            else if (enemyChoice < 3)
+                enemyType = "Green";
+            enemies[i].GetComponent<enemyType>().enemyName = enemyType;
+            enemies[i].GetComponent<enemyType>().setColor();
         }
     }
     public void MoveUp()
