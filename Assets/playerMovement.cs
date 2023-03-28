@@ -9,8 +9,34 @@ public class playerMovement : MonoBehaviour
     {
         mainBody = GetComponent<Rigidbody>();
     }
+    Vector3 targetPos;
     void Update()
     {
-        mainBody.velocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))*10;
+
+        RaycastHit hit;
+        Vector3 raycastDir = new Vector3();
+        if (Input.GetAxis("Horizontal") < 0)
+        {
+            raycastDir = Vector3.left;
+        }
+        if (Input.GetAxis("Horizontal") > 0)
+        {
+            raycastDir = Vector3.right;
+        }
+        if (Input.GetAxis("Vertical") < 0)
+        {
+            raycastDir = Vector3.back;
+        }
+        if (Input.GetAxis("Vertical") > 0)
+        {
+            raycastDir = Vector3.forward;
+        }
+        if (raycastDir != new Vector3())
+        {
+            Physics.Raycast(transform.position, raycastDir, out hit);
+            targetPos = hit.point;
+        }
+        targetPos.y = transform.position.y;
+        transform.position = (transform.position * (1 - (Time.deltaTime*10)) + targetPos * (Time.deltaTime*10));
     }
 }
