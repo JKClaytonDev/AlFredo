@@ -22,23 +22,34 @@ public class enemyType : MonoBehaviour
         }
         GetComponent<Renderer>().material.color = c;
     }
-    private void OnCollisionEnter(Collision collision)
+    public void KillEnemy()
     {
-        if (collision.gameObject.name.Contains("Player"))
+        if (enemyName == "Red")
         {
-            if (enemyName == "Red")
+            if (FindObjectOfType<playerMovement>().hasRed)
             {
                 FindObjectOfType<canvasManager>().redCount--;
+                Destroy(gameObject);
             }
-            if (enemyName == "Blue")
+
+        }
+        if (enemyName == "Blue")
+        {
+            if (FindObjectOfType<playerMovement>().hasBlue)
             {
                 FindObjectOfType<canvasManager>().blueCount--;
+                Destroy(gameObject);
             }
-            if (enemyName == "Green")
+        }
+        if (enemyName == "Green")
+        {
+            if (FindObjectOfType<playerMovement>().hasGreen)
             {
                 FindObjectOfType<canvasManager>().greenCount--;
+                Destroy(gameObject);
             }
-            Destroy(gameObject);
         }
+        
     }
+
 }

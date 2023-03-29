@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    public float zoom = 0;
+    public float zoom = 30;
+    bool frame1;
     private void Start()
     {
-        GetComponent<Camera>().orthographicSize = 0;
+        GetComponent<Camera>().orthographicSize = 30;
     }
     Vector3 orth = new Vector3();
     private void Update()
@@ -30,5 +31,16 @@ public class PlayerCamera : MonoBehaviour
         transform.position += orth;
         GetComponent<Camera>().orthographicSize = Mathf.Max(3, Mathf.Round(Vector3.Distance(transform.position, pos)-8))+zoom;
         zoom += Input.mouseScrollDelta.y;
+        if (!frame1)
+        {
+            Time.timeScale = 0;
+            frame1 = true;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            zoom = 5;
+            Time.timeScale = 1;
+        }
     }
+
 }

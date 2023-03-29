@@ -9,6 +9,9 @@ public class MapGenerator : MonoBehaviour
     public Vector3 location = new Vector3();
     public Vector3[] addedLocations = new Vector3[1];
     public mapObjectScript[] spawnedPrefabs = new mapObjectScript[1];
+    public GameObject orbGreen;
+    public GameObject orbRed;
+    public GameObject orbBlue;
     public int mapSize = 50;
     int branches = 3;
     public Vector3[] branchEnds = new Vector3[1];
@@ -140,6 +143,7 @@ public class MapGenerator : MonoBehaviour
                 red = 0.01f;
                 green = 0.01f;
                 blue = 0.01f;
+                
             }
             else
             {
@@ -160,7 +164,9 @@ public class MapGenerator : MonoBehaviour
             index++;
         }
         GameObject Player = Instantiate(playerPrefab, closestPoint + Vector3.up/2, new Quaternion(0, 0, 0, 0));
-
+        Instantiate(orbGreen, branchEnds[0]+Vector3.up, new Quaternion(), null);
+        Instantiate(orbRed, branchEnds[1] + Vector3.up, new Quaternion(), null);
+        Instantiate(orbBlue, branchEnds[2] + Vector3.up, new Quaternion(),null);
     }
     public bool checkVectorArrayContains(Vector3[] array, Vector3 pos)
     {

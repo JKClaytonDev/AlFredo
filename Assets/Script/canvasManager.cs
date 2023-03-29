@@ -44,5 +44,11 @@ public class canvasManager : MonoBehaviour
         red.text = ""+redCount;
         blue.text = "" + blueCount;
         green.text = "" + greenCount;
+        if (redCount <= 0)
+            red.text = "Completed - Press Fight to Battle";
+        if (blueCount <= 0)
+            blue.text = "Completed - Press Fight to Battle";
+        if (greenCount <= 0)
+            green.text = "Completed - Press Fight to Battle";
     }
 }
