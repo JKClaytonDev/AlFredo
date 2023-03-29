@@ -18,6 +18,7 @@ public class MapGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("STEP 1");
         addedLocations = new Vector3[mapSize * branches];
         spawnedPrefabs = new mapObjectScript[mapSize * branches];
         addedLocations[0] = new Vector3(0, 0);
@@ -101,6 +102,7 @@ public class MapGenerator : MonoBehaviour
                 addedLocations[g * mapSize + i] = branchLocations[i];
             }
         }
+        Debug.Log("STEP 2");
         Vector3 spawnPoint = new Vector3();
         for (int i = 0; i < addedLocations.Length; i++)
             spawnPoint += addedLocations[i];
@@ -114,6 +116,7 @@ public class MapGenerator : MonoBehaviour
                 minDistance = Vector3.Distance(spawnPoint, addedLocations[i]);
             }
         }
+        Debug.Log("STEP 3");
         for (int g = 0; g < branches; g++)
         {
             Vector3 farthestPos = new Vector3();
@@ -128,6 +131,7 @@ public class MapGenerator : MonoBehaviour
             }
             branchEnds[g] = farthestPos;
         }
+        Debug.Log("STEP 4");
         float playerDist1 = Vector3.Distance(closestPoint, branchEnds[0]);
         float playerDist2 = Vector3.Distance(closestPoint, branchEnds[1]);
         float playerDist3 = Vector3.Distance(closestPoint, branchEnds[2]);
@@ -138,6 +142,7 @@ public class MapGenerator : MonoBehaviour
             float red = Vector3.Distance(m.transform.position, branchEnds[0]);
             float green = Vector3.Distance(m.transform.position, branchEnds[1]);
             float blue = Vector3.Distance(m.transform.position, branchEnds[2]);
+            break;
             if (red == 0 || blue == 0 || green == 0)
             {
                 red = 0.01f;
@@ -151,7 +156,7 @@ public class MapGenerator : MonoBehaviour
                 green = (playerDist2 / green) / 2;
                 blue = (playerDist3 / blue) / 2;
             }
-            m.spawnEnemies((red + blue + green)/3);
+            //m.spawnEnemies((red + blue + green)/3);
             m.m.material.color = new Color(red, green, blue);
             if (checkVectorArrayContains(addedLocations, m.transform.position + new Vector3(-10, 0, 0)))
                 m.wallRight.SetActive(false);
@@ -163,6 +168,7 @@ public class MapGenerator : MonoBehaviour
                 m.wallDown.SetActive(false);
             index++;
         }
+        Debug.Log("STEP 1");
         GameObject Player = Instantiate(playerPrefab, closestPoint + Vector3.up/2, new Quaternion(0, 0, 0, 0));
         Instantiate(orbGreen, branchEnds[0]+Vector3.up, new Quaternion(), null);
         Instantiate(orbRed, branchEnds[1] + Vector3.up, new Quaternion(), null);
