@@ -37,7 +37,6 @@ public class bossFightManager : MonoBehaviour
             }
             else
             {
-                FindObjectOfType<playerMovement>().hurtPlayer();
                 shrinkImage.transform.localScale = new Vector3(1, 1, 1);
             }
         }

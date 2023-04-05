@@ -26,28 +26,16 @@ public class enemyType : MonoBehaviour
     {
         if (enemyName == "Red")
         {
-            if (FindObjectOfType<playerMovement>().hasRed)
-            {
-                FindObjectOfType<canvasManager>().redCount--;
-                Destroy(gameObject);
-            }
+
 
         }
         if (enemyName == "Blue")
         {
-            if (FindObjectOfType<playerMovement>().hasBlue)
-            {
-                FindObjectOfType<canvasManager>().blueCount--;
-                Destroy(gameObject);
-            }
+
         }
         if (enemyName == "Green")
         {
-            if (FindObjectOfType<playerMovement>().hasGreen)
-            {
-                FindObjectOfType<canvasManager>().greenCount--;
-                Destroy(gameObject);
-            }
+
         }
         
     }

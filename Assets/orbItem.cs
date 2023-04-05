@@ -11,12 +11,7 @@ public class orbItem : MonoBehaviour
     {
         if (!other.gameObject.name.Contains("Player"))
             return;
-        if (giveRed)
-            FindObjectOfType<playerMovement>().hasRed = true;
-        if (giveGreen)
-            FindObjectOfType<playerMovement>().hasGreen = true;
-        if (giveBlue)
-            FindObjectOfType<playerMovement>().hasBlue = true;
+
         Destroy(gameObject);
     }
 }

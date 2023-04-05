@@ -7,91 +7,90 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class playerMovement : MonoBehaviour
 {
+    public GameObject deadDog;
     Rigidbody mainBody;
-    public float stamina;
-    public bool running;
-    public float speed;
+    public Material[] directionSprites;
+    public Renderer directionSprite;
+    public float frameTime = 0.3f;
     public int health = 10;
-    public GameObject sword;
-    public float swordWarmup;
-    bool swordSwing;
-    public bool hasRed;
-    public bool hasGreen;
-    public bool hasBlue;
-    Vector3 dir;
-    private void Start()
+    float lineTime;
+    public void drawLine(Vector3 target)
     {
-        health = 10;
-        mainBody = GetComponent<Rigidbody>();
+        GetComponent<LineRenderer>().SetPosition(0, transform.position);
+        GetComponent<LineRenderer>().SetPosition(1, target);
+        lineTime = Time.realtimeSinceStartup + 0.1f;
     }
     public void killPlayer()
     {
-
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    public void hurtPlayer()
+    private void Start()
     {
-        health--;
+        direction = (Vector3.forward);
+        targetPos = realtimeTargetPos;
+        health = 10;
+        mainBody = GetComponent<Rigidbody>();
+        realtimeTargetPos = transform.position;
     }
+    float moveTime;
+    public Vector3 targetPos;
+    public Vector3 realtimeTargetPos;
+    Vector3 direction;
+    bool keyPressed;
     void Update()
     {
-        if (health < 0)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        if (Input.GetKey(KeyCode.W))
+        GetComponent<LineRenderer>().enabled = Time.realtimeSinceStartup < lineTime;
+        transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, Time.deltaTime / frameTime);
+        if (Input.GetKeyDown(KeyCode.W))
         {
-            dir.y = 1;
-            dir.x = -1;
+            direction = (Vector3.forward);
+            directionSprite.material = directionSprites[0];
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            dir.x = -1;
-            dir.y = -1;
+            direction = (Vector3.left);
+            directionSprite.material = directionSprites[1];
         }
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            dir.y = -1;
-            dir.x = 1;
+            direction = (Vector3.back);
+            directionSprite.material = directionSprites[2];
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            dir.x = 1;
-            dir.y = 1;
+            direction = (Vector3.right);
+            directionSprite.material = directionSprites[3];
         }
-        mainBody.velocity = speed * (dir.x * new Vector3(1, 0, -1) + (dir.y * new Vector3(1, 0, 1)));
-        //mainBody.velocity = speed * ((Input.GetAxis("Horizontal") * new Vector3(1, 0, -1)) + (Input.GetAxis("Vertical")) * new Vector3(1, 0, 1));
-
-        if (Vector3.Distance(mainBody.velocity, new Vector3()) > 0.1f)
+        if (Time.realtimeSinceStartup > moveTime)
         {
-            
-            //if (Mathf.Abs(Input.GetAxis("Horizontal")) != Mathf.Abs(Input.GetAxis("Vertical")))
-                transform.LookAt(mainBody.velocity + transform.position);
-            //transform.eulerAngles = new Vector3(transform.eulerAngles.x, Mathf.Round(transform.eulerAngles.y / 45) * 45, transform.eulerAngles.z);
+            keyPressed = true;
+            moveTime = Time.realtimeSinceStartup + frameTime;
+        }
+        RaycastHit target;
+        if (keyPressed)
+        {
+            FindObjectOfType<aiManagerTool>().MoveAll();
+            keyPressed = false;
+            if (!Physics.Raycast(realtimeTargetPos, direction, out target, 1))
+                realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction).z));
+            else if (target.transform.gameObject.GetComponent<AIScript>())
+                killPlayer();
         }
         
-        if (stamina > 90 && !running)
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-                running = true;
-        }
-        if (running)
-        {
-            speed = 3;
-            stamina -= Time.deltaTime*10;
-        }
-        else
-        {
-            stamina += Time.deltaTime*50;
-            if (stamina < 25)
+            RaycastHit hit;
+            Physics.Raycast(realtimeTargetPos, direction, out hit);
+            if (hit.transform.gameObject.GetComponent<AIScript>())
             {
-                speed = 0.5f;
+                if (direction == hit.transform.gameObject.GetComponent<AIScript>().direction)
+                {
+                    drawLine(hit.point);
+                    GameObject newCheck = Instantiate(deadDog);
+                    newCheck.transform.position = hit.transform.gameObject.transform.position;
+                    newCheck.transform.parent = null;
+                    Destroy(hit.transform.gameObject);
+                }
             }
-            else
-                speed = 1;
         }
-        if (stamina < 5 || !Input.GetKey(KeyCode.LeftShift))
-            running = false;
-        if (stamina > 100)
-            stamina = 100;
-        FindObjectOfType<canvasManager>().stamina.text = "Stamina: " + Mathf.RoundToInt(stamina);
-        FindObjectOfType<canvasManager>().health.text = "Health: " + Mathf.RoundToInt(health);
     }
 }
