@@ -14,6 +14,10 @@ public class playerMovement : MonoBehaviour
     public float frameTime = 0.3f;
     public int health = 10;
     float lineTime;
+    public TextMesh scoreText;
+    public int score;
+    public float collectedItems;
+    public pelletParticles p;
     public void drawLine(Vector3 target)
     {
         GetComponent<LineRenderer>().SetPosition(0, transform.position);
@@ -26,6 +30,7 @@ public class playerMovement : MonoBehaviour
     }
     private void Start()
     {
+        p = FindObjectOfType<pelletParticles>();
         direction = (Vector3.forward);
         targetPos = realtimeTargetPos;
         health = 10;
@@ -39,6 +44,18 @@ public class playerMovement : MonoBehaviour
     bool keyPressed;
     void Update()
     {
+        collectedItems = p.BlueParticles + p.RedParticles + p.sausageParticles * 100;
+        if (!FindObjectOfType<pellet>())
+        {
+            Time.timeScale = 0;
+            scoreText.text = "YOU WIN!\n" + score;
+            Camera.main.rect = new Rect(0, 0, 1, 1);
+            return;
+        }
+        Time.timeScale = Mathf.MoveTowards(Time.timeScale, 1, Time.unscaledDeltaTime*2);
+        Camera.main.rect = new Rect(Mathf.Sin(Time.unscaledTime*5) * (1 - Time.timeScale) / 5, Mathf.Cos(Time.unscaledTime * 5) * (1 - Time.timeScale) / 5, 1, 1);
+        score = (int)(collectedItems * (1 / (1 + Time.realtimeSinceStartup / 90)) * 100);
+        scoreText.text = "Score:\n" + score;
         GetComponent<LineRenderer>().enabled = Time.realtimeSinceStartup < lineTime;
         transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, Time.deltaTime / frameTime);
         if (Input.GetKeyDown(KeyCode.W))
@@ -85,6 +102,7 @@ public class playerMovement : MonoBehaviour
                 if (direction == hit.transform.gameObject.GetComponent<AIScript>().direction)
                 {
                     drawLine(hit.point);
+                    Time.timeScale = 0.4f;
                     GameObject newCheck = Instantiate(deadDog);
                     newCheck.transform.position = hit.transform.gameObject.transform.position;
                     newCheck.transform.parent = null;
