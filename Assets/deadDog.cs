@@ -18,14 +18,16 @@ public class deadDog : MonoBehaviour
     void Update()
     {
         transform.eulerAngles = startAngles + 5 * new Vector3(0, Mathf.Sin(Time.realtimeSinceStartup*5), 0);
-        if (Vector3.Distance(transform.position, FindObjectOfType<playerMovement>().transform.position) < 0.5f)
+        foreach (playerMovement p in FindObjectsOfType<playerMovement>())
         {
-            Destroy(gameObject);
-            FindObjectOfType<dogManager>().addDog();
-            GameObject sausage = Instantiate(spawnSausage);
-            sausage.transform.position = transform.position;
-            sausage.transform.parent = null;
-            sausage.GetComponent<pellet>().moving = true;
+            if (Vector3.Distance(transform.position, p.transform.position) < 0.5f)
+            {
+                Destroy(gameObject);
+                GameObject sausage = Instantiate(spawnSausage);
+                sausage.transform.position = transform.position;
+                sausage.transform.parent = null;
+                sausage.GetComponent<pellet>().moving = true;
+            }
         }
         transform.localScale = startScale * ((Mathf.Sin(Time.realtimeSinceStartup*2) + 3f)*0.25f);
     }

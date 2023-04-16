@@ -16,6 +16,24 @@ public class aiManagerTool : MonoBehaviour
             positions[i] = FindObjectsOfType<AIScript>()[i].transform.position;
         }
     }
+    private void Start()
+    {
+        frameTime = FindFirstObjectByType<playerMovement>().frameTime;
+    }
+    float frameTime;
+    float moveTime;
+    private void Update()
+    {
+        if (Time.realtimeSinceStartup > moveTime)
+        {
+            MoveAll();
+            foreach (playerMovement p in FindObjectsOfType<playerMovement>())
+            {
+                p.keyPressed = true;
+            }
+            moveTime = Time.realtimeSinceStartup + frameTime;
+        }
+        }
     public bool checkArrayContains(Vector3[] inV3, Vector3 check)
     {
         foreach (Vector3 v in inV3){

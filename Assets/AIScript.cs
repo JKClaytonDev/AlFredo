@@ -6,8 +6,8 @@ public class AIScript : MonoBehaviour
 {
    public Vector3 direction;
     public Vector3 nextMovePos;
-    public Renderer foodSprite;
-    public Material[] foodSprites;
+    public SpriteRenderer foodSprite;
+    public Sprite[] foodSprites;
     public Vector3 realtimeTargetPos;
     float frameTime;
     Vector3 setDir()
@@ -17,27 +17,27 @@ public class AIScript : MonoBehaviour
         Vector3 set = transform.forward;
         transform.eulerAngles = new Vector3();
         if (set == Vector3.forward) {
-            foodSprite.material = foodSprites[0];
+            foodSprite.sprite = foodSprites[0];
             return (Vector3.forward);
         }
         else if (set == Vector3.left) {
-            foodSprite.material = foodSprites[1];
+            foodSprite.sprite = foodSprites[1];
             return (Vector3.left);
         }
         else if (set == Vector3.back) {
-            foodSprite.material = foodSprites[2];
+            foodSprite.sprite = foodSprites[2];
             return (Vector3.back);
         }
         else
         {
-            foodSprite.material = foodSprites[3];
+            foodSprite.sprite = foodSprites[3];
             return (Vector3.right);
         }  
     }
     private void Start()
     {
         realtimeTargetPos = transform.position;
-        frameTime = FindObjectOfType<playerMovement>().frameTime;
+        frameTime = FindFirstObjectByType<playerMovement>().frameTime;
         nextMovePos = realtimeTargetPos;
         realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos).z));
         direction = setDir();
@@ -64,7 +64,10 @@ public class AIScript : MonoBehaviour
     private void Update()
     {
         transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, (Time.deltaTime / frameTime));
-        if (Vector3.Distance(transform.position, FindObjectOfType<playerMovement>().transform.position) < 0.5f)
-            FindObjectOfType<playerMovement>().killPlayer();
+        foreach (playerMovement p in FindObjectsOfType<playerMovement>())
+        {
+            if (Vector3.Distance(transform.position, p.transform.position) < 0.5f)
+                p.killPlayer();
+        }
     }
 }
