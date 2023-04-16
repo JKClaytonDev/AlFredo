@@ -7,17 +7,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class playerMovement : MonoBehaviour
 {
+    public int playerIndex;
     public GameObject deadDog;
     Rigidbody mainBody;
-    public Material[] directionSprites;
-    public Renderer directionSprite;
+    public SpriteRenderer directionSprite;
     public float frameTime = 0.3f;
     public int health = 10;
     float lineTime;
-    public TextMesh scoreText;
-    public int score;
-    public float collectedItems;
-    public pelletParticles p;
+    public Sprite[] chefSprites;
     public void drawLine(Vector3 target)
     {
         GetComponent<LineRenderer>().SetPosition(0, transform.position);
@@ -30,63 +27,49 @@ public class playerMovement : MonoBehaviour
     }
     private void Start()
     {
-        p = FindObjectOfType<pelletParticles>();
         direction = (Vector3.forward);
         targetPos = realtimeTargetPos;
         health = 10;
         mainBody = GetComponent<Rigidbody>();
         realtimeTargetPos = transform.position;
     }
-    float moveTime;
+    public float moveTime;
     public Vector3 targetPos;
     public Vector3 realtimeTargetPos;
     Vector3 direction;
-    bool keyPressed;
+    public bool keyPressed;
+    int directionSpriteIndex;
     void Update()
     {
-        collectedItems = p.BlueParticles + p.RedParticles + p.sausageParticles * 100;
-        if (!FindObjectOfType<pellet>())
-        {
-            Time.timeScale = 0;
-            scoreText.text = "YOU WIN!\n" + score;
-            Camera.main.rect = new Rect(0, 0, 1, 1);
-            return;
-        }
-        Time.timeScale = Mathf.MoveTowards(Time.timeScale, 1, Time.unscaledDeltaTime*2);
-        Camera.main.rect = new Rect(Mathf.Sin(Time.unscaledTime*5) * (1 - Time.timeScale) / 5, Mathf.Cos(Time.unscaledTime * 5) * (1 - Time.timeScale) / 5, 1, 1);
-        score = (int)(collectedItems * (1 / (1 + Time.realtimeSinceStartup / 90)) * 100);
-        scoreText.text = "Score:\n" + score;
         GetComponent<LineRenderer>().enabled = Time.realtimeSinceStartup < lineTime;
         transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, Time.deltaTime / frameTime);
-        if (Input.GetKeyDown(KeyCode.W))
+        if ((Input.GetKeyDown(KeyCode.W) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.UpArrow) && playerIndex == 1))
         {
             direction = (Vector3.forward);
-            directionSprite.material = directionSprites[0];
+            directionSpriteIndex = 15;
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if ((Input.GetKeyDown(KeyCode.A) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.LeftArrow) && playerIndex == 1))
         {
             direction = (Vector3.left);
-            directionSprite.material = directionSprites[1];
+            directionSpriteIndex = 5;
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if ((Input.GetKeyDown(KeyCode.S) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.DownArrow) && playerIndex == 1))
         {
             direction = (Vector3.back);
-            directionSprite.material = directionSprites[2];
+            directionSpriteIndex = 10;
+            
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if ((Input.GetKeyDown(KeyCode.D) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.RightArrow) && playerIndex == 1))
         {
             direction = (Vector3.right);
-            directionSprite.material = directionSprites[3];
+            directionSpriteIndex = 0;
         }
-        if (Time.realtimeSinceStartup > moveTime)
-        {
-            keyPressed = true;
-            moveTime = Time.realtimeSinceStartup + frameTime;
-        }
+        float spriteFrameTime = Time.realtimeSinceStartup * 10;
+        directionSprite.sprite = chefSprites[directionSpriteIndex+(int)(spriteFrameTime - (MathF.Floor(spriteFrameTime / 4)*4))];
+
         RaycastHit target;
         if (keyPressed)
         {
-            FindObjectOfType<aiManagerTool>().MoveAll();
             keyPressed = false;
             if (!Physics.Raycast(realtimeTargetPos, direction, out target, 1))
                 realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction).z));
@@ -102,7 +85,6 @@ public class playerMovement : MonoBehaviour
                 if (direction == hit.transform.gameObject.GetComponent<AIScript>().direction)
                 {
                     drawLine(hit.point);
-                    Time.timeScale = 0.4f;
                     GameObject newCheck = Instantiate(deadDog);
                     newCheck.transform.position = hit.transform.gameObject.transform.position;
                     newCheck.transform.parent = null;
