@@ -4,7 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 public class phaseManager : MonoBehaviour
 {
+    public GameObject gameCanvas;
+    public GameObject endCanvas;
+    public Text player1Score;
+    public Text player2Score;
+    public Text winnerName;
     public AudioSource musicManager;
+    public pelletParticles p;
     public playerMovement p1;
     public playerMovement p2;
     public GameObject phase1Object;
@@ -20,10 +26,13 @@ public class phaseManager : MonoBehaviour
     public GameObject p1MoveTarget4;
     public GameObject p2MoveTarget4;
     public GameObject borders;
+    public GameObject bowl;
+    public PlayerCamera c;
     int phase = 1;
     public Text timer;
     int lastPhase = 1;
     public float Timer;
+    bool gameEnd;
     private void Start()
     {
         p1.SetTarget(p1MoveTarget4, true);
@@ -34,6 +43,29 @@ public class phaseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        gameCanvas.SetActive(!gameEnd);
+        endCanvas.SetActive(gameEnd);
+        if (gameEnd)
+        {
+            player1Score.text = "Player 1 Score: " + p.score1;
+            player2Score.text = "Player 2 Score: " + p.score2;
+            if (p.score1 > p.score2)
+                winnerName.text = "Player 1 Wins!";
+            else if (p.score1 < p.score2)
+                winnerName.text = "Player 2 Wins!";
+            else
+                winnerName.text = "Tie!";
+            phase1Object.gameObject.SetActive(false);
+            phase2Object.gameObject.SetActive(false);
+            phase3Object.gameObject.SetActive(false);
+            phase4Object.gameObject.SetActive(false);
+            musicManager.volume = 0.1f;
+            p1.gameObject.SetActive(false);
+            p2.gameObject.SetActive(false);
+            c.enabled = false;
+            c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, bowl.transform.position + Vector3.up * 3, Time.deltaTime * 100);
+            return;
+        }
         p1.GetComponent<Rigidbody>().isKinematic = !p1.movingTarget;
         p2.GetComponent<Rigidbody>().isKinematic = !p2.movingTarget;
         borders.SetActive(!p1.movingTarget && !p2.movingTarget);
@@ -65,6 +97,7 @@ public class phaseManager : MonoBehaviour
             {
                 p1.SetTarget(p1MoveTarget4, true);
                 p2.SetTarget(p2MoveTarget4, true);
+                gameEnd = true;
             }
             lastPhase = phase;
         }

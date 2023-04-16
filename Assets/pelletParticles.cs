@@ -15,14 +15,18 @@ public class pelletParticles : MonoBehaviour
     public ParticleSystem sausage;
     public Text p1Score;
     public Text p2Score;
+    public int score1;
+    public int score2;
 
     // Update is called once per frame
     void Update()
     {
+        score1 = (RedParticles1 + BlueParticles1) * (sausageParticles1+1);
+        score2 = (RedParticles2 + BlueParticles2) * (sausageParticles2+1);
         red.maxParticles = RedParticles1+RedParticles2;
         blue.maxParticles = BlueParticles1+BlueParticles2;
         sausage.maxParticles = sausageParticles1+sausageParticles2;
-        p1Score.text = ""+(RedParticles1 + BlueParticles1) + sausageParticles1;
-        p2Score.text = ""+(RedParticles2 + BlueParticles2) + sausageParticles2;
+        p1Score.text = "" + score1;
+        p2Score.text = "" + score2;
     }
 }
