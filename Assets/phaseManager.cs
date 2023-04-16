@@ -43,6 +43,10 @@ public class phaseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (p2.movingTarget && !p1.movingTarget)
+            p1.transform.position = p1.movingTargetPos;
+        if (p1.movingTarget && !p2.movingTarget)
+            p2.transform.position = p2.movingTargetPos;
         gameCanvas.SetActive(!gameEnd);
         endCanvas.SetActive(gameEnd);
         if (gameEnd)

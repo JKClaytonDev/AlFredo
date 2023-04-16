@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class playerMovement : MonoBehaviour
 {
     public bool dead;
-    Vector3 movingTargetPos;
+    public Vector3 movingTargetPos;
     public bool movingTarget = false;
     public int playerIndex;
     public GameObject deadDog;
