@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: 044ad6e9dea7c944a99459fe275b6334
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 7
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 1
+    sampleRateSetting: 0
+    sampleRateOverride: 0
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+    preloadAudioData: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 31327
+  packageName: Arcade Sounds
+  packageVersion: 1.0.3
+  assetPath: Assets/ARCADE SOUNDS/ArcadeSounds_Attack/dry/ogg/ArcadeSounds_attack6.ogg
+  uploadId: 52840

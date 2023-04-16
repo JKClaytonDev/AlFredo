@@ -143,7 +143,6 @@ public class playerMovement : MonoBehaviour
             if (!Physics.Raycast(realtimeTargetPos, direction, out target, 1))
             {
                 realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction).z));
-                Debug.Log("TARGET COLLIDED WITH " + target.transform.gameObject.name);
             }
             else if (target.transform.gameObject.GetComponent<AIScript>())
                 killPlayer();
