@@ -8,6 +8,10 @@ public class pellet : MonoBehaviour
     public bool blue;
     public bool sausage;
     public bool moving;
+    int playerIndex;
+    public AudioClip pickUpSound;
+    public AudioClip sausagePickUpSound;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -18,9 +22,13 @@ public class pellet : MonoBehaviour
     {
         if (other.gameObject.GetComponent<playerMovement>())
         {
+            playerIndex = other.gameObject.GetComponent<playerMovement>().playerIndex;
             Destroy(GetComponent<SphereCollider>());
-            transform.localScale *= 0.8f;
             moving = true;
+            if (sausage)
+                GetComponent<AudioSource>().PlayOneShot(sausagePickUpSound);
+            else
+                GetComponent<AudioSource>().PlayOneShot(pickUpSound);
         }
             
     }
@@ -29,15 +37,27 @@ public class pellet : MonoBehaviour
         if (moving)
         {
             transform.position = Vector3.MoveTowards(transform.position, FindObjectOfType<pelletParticles>().transform.position + Vector3.up * 2, 10 * Time.deltaTime);
-            if (Vector3.Distance(transform.position, FindObjectOfType<pelletParticles>().transform.position+Vector3.up*2) < 0.1f)
+            if (Vector3.Distance(transform.position, FindObjectOfType<pelletParticles>().transform.position+Vector3.up*2) < 0.02f)
             {
                 Destroy(gameObject);
-                if (red)
-                    FindObjectOfType<pelletParticles>().RedParticles++;
-                if (blue)
-                    FindObjectOfType<pelletParticles>().BlueParticles++;
-                if (sausage)
-                    FindObjectOfType<pelletParticles>().sausageParticles++;
+                if (playerIndex == 0)
+                {
+                    if (red)
+                        FindObjectOfType<pelletParticles>().RedParticles1++;
+                    if (blue)
+                        FindObjectOfType<pelletParticles>().BlueParticles1++;
+                    if (sausage)
+                        FindObjectOfType<pelletParticles>().sausageParticles1++;
+                }
+                if (playerIndex == 1)
+                {
+                    if (red)
+                        FindObjectOfType<pelletParticles>().RedParticles2++;
+                    if (blue)
+                        FindObjectOfType<pelletParticles>().BlueParticles2++;
+                    if (sausage)
+                        FindObjectOfType<pelletParticles>().sausageParticles2++;
+                }
             }
         }
     }

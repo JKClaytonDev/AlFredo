@@ -55,7 +55,6 @@ public class AIScript : MonoBehaviour
             counter++;
             direction = setDir();
         }
-        Debug.Log("MOVING ENEMY " + counter + name);
         if (counter != 100)
             realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction).z));
         nextMovePos = realtimeTargetPos;
