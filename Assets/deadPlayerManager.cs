@@ -37,9 +37,15 @@ public class deadPlayerManager : MonoBehaviour
             GetComponent<AudioSource>().PlayOneShot(dieSound);
         }
         if (p1.dead && Time.realtimeSinceStartup > p1DeadTime)
+        {
             p1.dead = false;
+            FindObjectOfType<playerStatusManager>().PlayAnimation("BackAlive", 0);
+        }
         if (p2.dead && Time.realtimeSinceStartup > p2DeadTime)
+        {
             p2.dead = false;
+            FindObjectOfType<playerStatusManager>().PlayAnimation("BackAlive", 1);
+        }
         lastp1DeadCheck = p1.dead;
         lastp2DeadCheck = p2.dead;
     }

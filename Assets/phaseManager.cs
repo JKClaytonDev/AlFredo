@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class phaseManager : MonoBehaviour
 {
+    public bool menu;
     public GameObject gameCanvas;
     public GameObject endCanvas;
+    public Canvas menuCanvas;
     public Text player1Score;
     public Text player2Score;
     public Text winnerName;
@@ -32,17 +35,83 @@ public class phaseManager : MonoBehaviour
     public Text timer;
     int lastPhase = 1;
     public float Timer;
+    public Text p1Ready;
+    public Text p2Ready;
+    bool ready1;
+    bool ready2;
     bool gameEnd;
+    public Animator p1ReadyAnim;
+    public Animator p2ReadyAnim;
     private void Start()
     {
         p1.SetTarget(p1MoveTarget4, true);
         p2.SetTarget(p2MoveTarget4, true);
         phase = Mathf.CeilToInt(Timer / 15);
         lastPhase = phase;
+        ready1 = false;
+        ready2 = false;
+        menu = true;
+        startTime = -1;
     }
+    float startTime;
     // Update is called once per frame
     void Update()
     {
+        if (menu)
+        {
+            Time.timeScale = 0;
+            p1.gameObject.SetActive(false);
+            p2.gameObject.SetActive(false);
+            phase1Object.gameObject.SetActive(false);
+            phase2Object.gameObject.SetActive(false);
+            phase3Object.gameObject.SetActive(false);
+            phase4Object.gameObject.SetActive(false);
+            menuCanvas.gameObject.SetActive(true);
+            gameCanvas.gameObject.SetActive(false);
+            endCanvas.gameObject.SetActive(false);
+            if (!ready1 && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.S)))
+            {
+                p1ReadyAnim.Play("Spawn");
+                ready1 = true;
+            }
+            if (!ready2 && (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.DownArrow)))
+            {
+                p2ReadyAnim.Play("Spawn");
+                ready2 = true;
+            }
+            if (ready1)
+                p1Ready.text = "Player 1 Ready";
+            else
+                p1Ready.text = "Player 1 press WASD";
+            if (ready2)
+                p2Ready.text = "Player 2 Ready";
+            else
+                p2Ready.text = "Player 2 press Arrows";
+            if (ready1 && ready2 && startTime == -1)
+                startTime = Time.realtimeSinceStartup + 3;
+            if (startTime != -1)
+            {
+                p1Ready.text = "";
+                p2Ready.text = "Starting in " + Mathf.CeilToInt(startTime - Time.realtimeSinceStartup);
+            }
+            if (Time.realtimeSinceStartup > startTime && startTime != -1)
+            {
+                menu = false;
+                startTime = -1;
+            }
+
+            return;
+        }
+        else
+        {
+            if (Time.timeScale == 0)
+            {
+                p1.gameObject.SetActive(true);
+                p2.gameObject.SetActive(true);
+            }
+            Time.timeScale = 1;
+        }
+        menuCanvas.gameObject.SetActive(false);
         if (p2.movingTarget && !p1.movingTarget)
             p1.transform.position = p1.movingTargetPos;
         if (p1.movingTarget && !p2.movingTarget)
@@ -51,6 +120,8 @@ public class phaseManager : MonoBehaviour
         endCanvas.SetActive(gameEnd);
         if (gameEnd)
         {
+            if (Input.GetKey(KeyCode.Space))
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             player1Score.text = "Player 1 Score: " + p.score1;
             player2Score.text = "Player 2 Score: " + p.score2;
             if (p.score1 > p.score2)
@@ -79,7 +150,7 @@ public class phaseManager : MonoBehaviour
             Timer += Time.deltaTime;
             musicManager.volume = 0.5f;
         }
-        phase = Mathf.CeilToInt(Timer / 15);
+        phase = Mathf.CeilToInt(Timer / 25);
         if (lastPhase != phase)
         {
             if (lastPhase == 1)
@@ -140,7 +211,7 @@ public class phaseManager : MonoBehaviour
         }
         else
         {
-            timer.text = "Time: " + (int)(((phase) * 15) - Timer);
+            timer.text = "Time: " + (int)(((phase) * 25) - Timer);
             phase1Object.gameObject.SetActive(phase == 1);
             phase2Object.gameObject.SetActive(phase == 2);
             phase3Object.gameObject.SetActive(phase == 3);

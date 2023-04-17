@@ -8,7 +8,7 @@ public class pellet : MonoBehaviour
     public bool blue;
     public bool sausage;
     public bool moving;
-    int playerIndex;
+    public int playerIndex = -1;
     public AudioClip pickUpSound;
     public AudioClip sausagePickUpSound;
     
@@ -23,6 +23,8 @@ public class pellet : MonoBehaviour
         if (other.gameObject.GetComponent<playerMovement>())
         {
             playerIndex = other.gameObject.GetComponent<playerMovement>().playerIndex;
+            if (sausage)
+                Debug.Log("SAUSAGE INDEX IS " + playerIndex);
             Destroy(GetComponent<SphereCollider>());
             moving = true;
             if (sausage)
@@ -39,6 +41,10 @@ public class pellet : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, FindObjectOfType<pelletParticles>().transform.position + Vector3.up * 2, 10 * Time.deltaTime);
             if (Vector3.Distance(transform.position, FindObjectOfType<pelletParticles>().transform.position+Vector3.up*2) < 0.02f)
             {
+                if (sausage)
+                    FindObjectOfType<playerStatusManager>().PlayAnimation("GetItem", playerIndex);
+                else
+                    FindObjectOfType<playerStatusManager>().PlayAnimation("GetSausage", playerIndex);
                 Destroy(gameObject);
                 if (playerIndex == 0)
                 {
@@ -48,6 +54,7 @@ public class pellet : MonoBehaviour
                         FindObjectOfType<pelletParticles>().BlueParticles1++;
                     if (sausage)
                         FindObjectOfType<pelletParticles>().sausageParticles1++;
+                    
                 }
                 if (playerIndex == 1)
                 {

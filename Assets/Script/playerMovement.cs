@@ -34,6 +34,7 @@ public class playerMovement : MonoBehaviour
     }
     public void killPlayer()
     {
+        FindObjectOfType<playerStatusManager>().PlayAnimation("Killed", playerIndex);
         dead = true;
         transform.position = movingTargetPos;
         realtimeTargetPos = transform.position;
