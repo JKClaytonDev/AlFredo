@@ -1,0 +1,98 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class deadPlayerManager : MonoBehaviour
+{
+    public playerMovement p1;
+    public playerMovement p2;
+    bool lastp1DeadCheck;
+    bool lastp2DeadCheck;
+    float p1DeadTime;
+    float p2DeadTime;
+    public AudioClip dieSound;
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+    public GameObject p1DeadText;
+    public GameObject p2DeadText;
+    public GameObject p1DeadBar;
+    public GameObject p2DeadBar;
+    public int p1PressIndex = -1;
+    public int p2PressIndex = -1;
+    float PressTime;
+    int p1Presses;
+    int p2Presses;
+    // Update is called once per frame
+    void Update()
+    {
+        p1DeadText.gameObject.SetActive(p1.dead);
+        p2DeadText.gameObject.SetActive(p2.dead);
+        p1DeadBar.transform.localScale = new Vector3(((float)(p1Presses+1)) / 11, 1, 1);
+        p2DeadBar.transform.localScale = new Vector3(((float)(p2Presses+1)) / 11, 1, 1);
+        if (p1.movingTarget)
+            p1.dead = false;
+        if (p2.movingTarget)
+            p2.dead = false;
+        p1.gameObject.SetActive(!p1.dead);
+        p2.gameObject.SetActive(!p2.dead);
+        if (p1.dead && !lastp1DeadCheck)
+        {
+            p1Presses = 0;
+            p1DeadTime = Time.realtimeSinceStartup + 5;
+            GetComponent<AudioSource>().PlayOneShot(dieSound);
+        }
+        if (p2.dead && !lastp2DeadCheck)
+        {
+            p2Presses = 0;
+            p2DeadTime = Time.realtimeSinceStartup + 5;
+            GetComponent<AudioSource>().PlayOneShot(dieSound);
+        }
+        if (Time.realtimeSinceStartup > PressTime)
+        {
+            bool pressed = false;
+            if (Input.GetKey(KeyCode.A) && p1PressIndex == -1)
+            {
+                p1PressIndex = 1;
+                p1Presses++;
+                pressed = true;
+            }
+            else if (Input.GetKey(KeyCode.D) && p1PressIndex != -1)
+            {
+                p1PressIndex = -1;
+                p1Presses++;
+                pressed = true;
+            }
+            if (Input.GetKey(KeyCode.RightArrow) && p2PressIndex == -1)
+            {
+                p2PressIndex = 1;
+                p2Presses++;
+                pressed = true;
+            }
+            else if (Input.GetKey(KeyCode.LeftArrow) && p2PressIndex != -1)
+            {
+                p2PressIndex = -1;
+                p2Presses++;
+                pressed = true;
+            }
+            if (pressed)
+            {
+                PressTime = Time.realtimeSinceStartup + 0.1f;
+            }
+        }
+        if (p1.dead && p1Presses > 10)
+        {
+            p1.dead = false;
+            FindObjectOfType<playerStatusManager>().PlayAnimation("BackAlive", 0);
+        }
+        if (p2.dead && p2Presses > 10)
+        {
+            p2.dead = false;
+            FindObjectOfType<playerStatusManager>().PlayAnimation("BackAlive", 1);
+        }
+        lastp1DeadCheck = p1.dead;
+        lastp2DeadCheck = p2.dead;
+    }
+}
