@@ -14,10 +14,7 @@ public class AIScript : MonoBehaviour
     Vector3 setDir()
     {
         transform.forward = direction;
-        if (turnOtherWay)
-            transform.Rotate(0, -90, 0);
-        else
-        transform.Rotate(0, 90, 0);
+        transform.Rotate(0, 180, 0);
         Vector3 set = transform.forward;
         transform.eulerAngles = new Vector3();
         if (set == Vector3.forward) {
@@ -38,8 +35,12 @@ public class AIScript : MonoBehaviour
             return (Vector3.right);
         }  
     }
+    Vector3 lastPos;
+
     private void Start()
     {
+        if (turnOtherWay)
+            transform.Rotate(0, -90, 0);
         realtimeTargetPos = transform.position;
         frameTime = FindFirstObjectByType<playerMovement>().frameTime;
         nextMovePos = realtimeTargetPos;
@@ -66,6 +67,29 @@ public class AIScript : MonoBehaviour
     }
     private void Update()
     {
+
+        lastPos = transform.position;
+
+        if (transform.position.y < lastPos.y)
+        {
+            foodSprite.sprite = foodSprites[0];
+            direction = (Vector3.forward);
+        }
+        else if (transform.position.x < lastPos.x)
+        {
+            foodSprite.sprite = foodSprites[1];
+            direction = (Vector3.left);
+        }
+        else if (transform.position.y > lastPos.y)
+        {
+            foodSprite.sprite = foodSprites[2];
+            direction = (Vector3.back);
+        }
+        else if (transform.position.x > lastPos.x)
+        {
+            foodSprite.sprite = foodSprites[3];
+            direction = (Vector3.right);
+        }
         transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, (Time.deltaTime / frameTime));
         foreach (playerMovement p in FindObjectsOfType<playerMovement>())
         {
