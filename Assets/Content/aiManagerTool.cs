@@ -18,7 +18,7 @@ public class aiManagerTool : MonoBehaviour
     }
     private void Start()
     {
-        frameTime = FindFirstObjectByType<playerMovement>().frameTime;
+        frameTime = FindObjectOfType<playerMovement>().frameTime;
     }
     float frameTime;
     float moveTime;

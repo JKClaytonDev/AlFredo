@@ -42,7 +42,7 @@ public class AIScript : MonoBehaviour
         if (turnOtherWay)
             transform.Rotate(0, -90, 0);
         realtimeTargetPos = transform.position;
-        frameTime = FindFirstObjectByType<playerMovement>().frameTime;
+        frameTime = FindObjectOfType<playerMovement>().frameTime;
         nextMovePos = realtimeTargetPos;
         realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos).z));
         direction = setDir();

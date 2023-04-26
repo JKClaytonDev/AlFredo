@@ -1,10 +1,13 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class phaseManager : MonoBehaviour
 {
+    public Material[] itemMats;
+    public MeshRenderer item1Mesh;
+    public MeshRenderer item2Mesh;
     public bool menu;
     public GameObject gameCanvas;
     public GameObject endCanvas;
@@ -37,13 +40,14 @@ public class phaseManager : MonoBehaviour
     public float Timer;
     public Text p1Ready;
     public Text p2Ready;
-    bool ready1;
-    bool ready2;
+    public bool ready1;
+    public bool ready2;
     bool gameEnd;
     public Animator p1ReadyAnim;
     public Animator p2ReadyAnim;
     public GameObject dialogue;
     public GameObject dialogueSuicide;
+    public GameObject selectStuff;
     private void Start()
     {
         p1.SetTarget(p1MoveTarget4, true);
@@ -55,10 +59,27 @@ public class phaseManager : MonoBehaviour
         menu = true;
         startTime = -1;
     }
+    int menuStage = 0;
     float startTime;
+    public Image p1Image;
+    public Image p2Image;
+    public Text p1ItemText;
+    public Text p2ItemText;
+    public Text p1ItemName;
+    public Text p2ItemName;
+
+    public Sprite[] itemSprites;
+    public string[] itemNames;
+    public string[] itemDescriptions;
+    public Text lockInTime;
+    public int p1ItemIndex;
+    public int p2ItemIndex;
     // Update is called once per frame
     void Update()
     {
+        item1Mesh.material = itemMats[p1ItemIndex];
+        item2Mesh.material = itemMats[p2ItemIndex];
+        selectStuff.SetActive(false);
         if (dialogue)
         {
             if (dialogueSuicide.activeInHierarchy)
@@ -76,30 +97,87 @@ public class phaseManager : MonoBehaviour
             menuCanvas.gameObject.SetActive(true);
             gameCanvas.gameObject.SetActive(false);
             endCanvas.gameObject.SetActive(false);
-            if (!ready1 && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.S)))
+            
+            if (menuStage == 0)
             {
-                p1ReadyAnim.Play("Spawn");
-                ready1 = true;
+                if (!ready1 && (Input.GetKey(KeyCode.W)))
+                {
+                    p1ReadyAnim.Play("Spawn");
+                    ready1 = true;
+                }
+                if (!ready2 && (Input.GetKey(KeyCode.UpArrow)))
+                {
+                    p2ReadyAnim.Play("Spawn");
+                    ready2 = true;
+                }
+                if (ready1)
+                    p1Ready.text = "Player 1 Ready";
+                else
+                    p1Ready.text = "Player 1 press W";
+                if (ready2)
+                    p2Ready.text = "Player 2 Ready";
+                else
+                    p2Ready.text = "Player 2 press Up";
+                if (ready1 && ready2)
+                {
+                    menuStage = 1;
+                    ready1 = false;
+                    ready2 = false;
+                }
             }
-            if (!ready2 && (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.DownArrow)))
+            if (menuStage == 1)
             {
-                p2ReadyAnim.Play("Spawn");
-                ready2 = true;
+                lockInTime.text = "Pick your Taste Bud!";
+                selectStuff.SetActive(true);
+                p1Ready.text = "</> to Scroll, Down to Pick";
+                p2Ready.text = "A/D to Scroll, S to Pick";
+                if (Input.GetKeyDown(KeyCode.D))
+                    p1ItemIndex++;
+                if (Input.GetKeyDown(KeyCode.A))
+                    p1ItemIndex--;
+                if (Input.GetKeyDown(KeyCode.RightArrow))
+                    p2ItemIndex++;
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    p2ItemIndex--;
+                p1ItemIndex = Mathf.Min(p1ItemIndex, 1);
+                p2ItemIndex = Mathf.Min(p2ItemIndex, 1);
+                p1ItemIndex = Mathf.Max(p1ItemIndex, 0);
+                p2ItemIndex = Mathf.Max(p2ItemIndex, 0);
+                p1ItemText.text = itemDescriptions[p1ItemIndex];
+                p2ItemText.text = itemDescriptions[p2ItemIndex];
+                p1ItemName.text = itemNames[p1ItemIndex];
+                p2ItemName.text = itemNames[p2ItemIndex];
+                p1Image.sprite = itemSprites[p1ItemIndex];
+                p2Image.sprite = itemSprites[p2ItemIndex];
+                if (Input.GetKeyDown(KeyCode.S))
+                    ready1 = true;
+                if (Input.GetKeyDown(KeyCode.DownArrow))
+                    ready2 = true;
+                if (Input.GetKeyDown(KeyCode.W))
+                    ready1 = false;
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                    ready2 = false;
+                if (ready1)
+                    p1Ready.text = "W to go back";
+                if (ready2)
+                    p2Ready.text = "Up to go back";
+                p1Image.gameObject.SetActive(!ready1);
+                p1ItemText.gameObject.SetActive(!ready1);
+                p1ItemName.gameObject.SetActive(!ready1);
+                p2ItemText.gameObject.SetActive(!ready2);
+                p2ItemName.gameObject.SetActive(!ready2);
+                p2Image.gameObject.SetActive(!ready2);
+                if (ready1 && ready2 && startTime == -1)
+                {
+                    startTime = Time.realtimeSinceStartup + 3;
+                }
+                if (!(ready1 && ready2))
+                    startTime = -1;
             }
-            if (ready1)
-                p1Ready.text = "Player 1 Ready";
-            else
-                p1Ready.text = "Player 1 press WASD";
-            if (ready2)
-                p2Ready.text = "Player 2 Ready";
-            else
-                p2Ready.text = "Player 2 press Arrows";
-            if (ready1 && ready2 && startTime == -1)
-                startTime = Time.realtimeSinceStartup + 3;
+                //startTime = Time.realtimeSinceStartup + 3;
             if (startTime != -1)
             {
-                p1Ready.text = "";
-                p2Ready.text = "Starting in " + Mathf.CeilToInt(startTime - Time.realtimeSinceStartup);
+                lockInTime.text = "Starting in " + Mathf.CeilToInt(startTime - Time.realtimeSinceStartup);
             }
             if (Time.realtimeSinceStartup > startTime && startTime != -1)
             {

@@ -24,6 +24,7 @@ public class playerMovement : MonoBehaviour
     public Sprite[] chefSprites;
     public GameObject onionObject;
     public AudioClip fireSound;
+    public LineRenderer l;
     public void SetTarget(GameObject target, bool verticalFirstIn)
     {
         verticalFirst = verticalFirstIn;
@@ -32,10 +33,12 @@ public class playerMovement : MonoBehaviour
     }
     public void drawLine(Vector3 target)
     {
-        GetComponent<AudioSource>().PlayOneShot(fireSound);
-        GetComponent<LineRenderer>().SetPosition(0, transform.position);
-        GetComponent<LineRenderer>().SetPosition(1, target);
-        lineTime = Time.realtimeSinceStartup + 0.1f;
+        int posCount = l.positionCount;
+        l.positionCount = posCount + 4;
+        l.SetPosition(posCount, transform.position-Vector3.up*100);
+        l.SetPosition(posCount+1, transform.position);
+        l.SetPosition(posCount+2, target);
+        l.SetPosition(posCount+3, target - Vector3.up * 100);
     }
     public void killPlayer()
     {
@@ -126,7 +129,6 @@ public class playerMovement : MonoBehaviour
             return;
         }
         Time.timeScale = 1;
-        GetComponent<LineRenderer>().enabled = Time.realtimeSinceStartup < lineTime;
         transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, Time.deltaTime / moveFrameTime);
         if ((Input.GetKeyDown(KeyCode.W) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.UpArrow) && playerIndex == 1))
         {
@@ -183,6 +185,8 @@ public class playerMovement : MonoBehaviour
                     if (direction == hit.transform.gameObject.GetComponent<AIScript>().direction)
                     {
                         drawLine(hit.point);
+                        drawLine(hit.point+Vector3.up*3);
+                        drawLine(hit.point - Vector3.up*3);
                         GameObject newCheck = Instantiate(deadDog);
                         newCheck.transform.position = hit.transform.gameObject.transform.position;
                         newCheck.transform.parent = null;
@@ -196,6 +200,8 @@ public class playerMovement : MonoBehaviour
                         if (direction == hit.transform.gameObject.GetComponent<playerMovement>().direction && !hit.transform.gameObject.GetComponent<playerMovement>().onion)
                         {
                             drawLine(hit.point);
+                            drawLine(hit.point + Vector3.up*3);
+                            drawLine(hit.point - Vector3.up*3);
                             pelletParticles p = FindObjectOfType<pelletParticles>();
                             if (playerIndex == 0)
                             {
