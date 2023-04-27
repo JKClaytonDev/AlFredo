@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class aiManagerTool : MonoBehaviour
 {
-    float ft, mt;
+    public float ft, mt;
     int idx;
     private void Start() => ft = FindObjectOfType<playerMovement>().frameTime;
     private void Update()

@@ -7,24 +7,27 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class playerMovement : MonoBehaviour
 {
-    public float onionTime;
-    public bool onion = false;
-    public float pepperTime;
-    public bool pepper = false;
-    public bool dead;
-    public Vector3 movingTargetPos;
-    public bool movingTarget = false;
-    public int playerIndex;
-    public GameObject deadDog;
-    Rigidbody mainBody;
+    public float onionTime, pepperTime, frameTime = 0.3f, moveTime;
+    public aiManagerTool AI;
+    public bool onion = false, pepper = false, dead, movingTarget = false, keyPressed, verticalFirst;
+    public int playerIndex, health = 10, directionSpriteIndex;
+    public GameObject deadDog, onionObject;
+    public Vector3 movingTargetPos, targetPos, realtimeTargetPos, dir = Vector3.left;
     public SpriteRenderer directionSprite;
-    public float frameTime = 0.3f;
-    public int health = 10;
-    float lineTime;
     public Sprite[] chefSprites;
-    public GameObject onionObject;
     public AudioClip fireSound;
+    Rigidbody mainBody;
     public LineRenderer l;
+    Vector3 direction, lastPos;
+
+    void Start()
+    {
+        direction = (Vector3.forward);
+        targetPos = realtimeTargetPos;
+        health = 10;
+        mainBody = GetComponent<Rigidbody>();
+        realtimeTargetPos = transform.position;
+    }
     public void SetTarget(GameObject target, bool verticalFirstIn)
     {
         verticalFirst = verticalFirstIn;
@@ -48,22 +51,6 @@ public class playerMovement : MonoBehaviour
         realtimeTargetPos = transform.position;
         targetPos = realtimeTargetPos;
     }
-    private void Start()
-    {
-        direction = (Vector3.forward);
-        targetPos = realtimeTargetPos;
-        health = 10;
-        mainBody = GetComponent<Rigidbody>();
-        realtimeTargetPos = transform.position;
-    }
-    public float moveTime;
-    public Vector3 targetPos;
-    public Vector3 realtimeTargetPos;
-    Vector3 direction;
-    public bool keyPressed;
-    int directionSpriteIndex;
-    bool verticalFirst;
-    Vector3 dir = Vector3.left;
     void Update()
     {
         onionObject.SetActive(onion);
@@ -72,13 +59,14 @@ public class playerMovement : MonoBehaviour
         Vector3 pos = transform.position;
         pos.y = -0.5f;
         transform.position = pos;
+
         if (dead)
             return;
+
         float spriteFrameTime = Time.realtimeSinceStartup * 10;
-        float moveFrameTime = frameTime;
-        if (pepper)
-            moveFrameTime *= 0.5f;
-        directionSprite.sprite = chefSprites[directionSpriteIndex + (int)(spriteFrameTime - (MathF.Floor(spriteFrameTime / 4) * 4))];
+        float moveFrameTime = pepper ? frameTime * 0.5f : frameTime;
+        directionSprite.sprite = chefSprites[directionSpriteIndex + (int)(spriteFrameTime - (Mathf.Floor(spriteFrameTime / 4) * 4))];
+
         if (movingTarget)
         {
             Vector3 lastPos = transform.position;
@@ -88,7 +76,6 @@ public class playerMovement : MonoBehaviour
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, movingTargetPos.z), Time.deltaTime / frameTime);
                 else if (transform.position.x != movingTargetPos.x)
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(movingTargetPos.x, transform.position.y, transform.position.z), Time.deltaTime / frameTime);
-
             }
             else
             {
@@ -97,65 +84,58 @@ public class playerMovement : MonoBehaviour
                 else if (transform.position.z != movingTargetPos.z)
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, movingTargetPos.z), Time.deltaTime / frameTime);
             }
-            if (lastPos.x < transform.position.x) //Right
+
+            if (lastPos != transform.position)
             {
-                direction = (Vector3.right);
-                directionSpriteIndex = 0;
+                direction = Vector3.Normalize(transform.position - lastPos);
+                if (lastPos.x < transform.position.x) //Right
+                    directionSpriteIndex = 0;
+                else if (lastPos.x > transform.position.x) //Left
+                    directionSpriteIndex = 5;
+                else if (lastPos.z > transform.position.z) //Down
+                    directionSpriteIndex = 10;
+                else if (lastPos.z < transform.position.z) //Up
+                    directionSpriteIndex = 15;
             }
-            else if (lastPos.x > transform.position.x) //Left
-            {
-                direction = (Vector3.left);
-                directionSpriteIndex = 5;
-            }
-            else if (lastPos.z > transform.position.z) //Down
-            {
-                direction = (Vector3.back);
-                directionSpriteIndex = 10;
-            }
-            else if (lastPos.z < transform.position.z) //Up
-            {
-                direction = (Vector3.forward);
-                directionSpriteIndex = 15;
-            }
-            if (transform.position.x ==movingTargetPos.x && transform.position.z == movingTargetPos.z)
+
+            if (transform.position.x == movingTargetPos.x && transform.position.z == movingTargetPos.z)
             {
                 Time.timeScale = 1;
                 movingTarget = false;
                 realtimeTargetPos = transform.position;
                 targetPos = realtimeTargetPos;
-                Debug.Log("REACHED TARGET");
             }
-            
             return;
         }
         Time.timeScale = 1;
         transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, Time.deltaTime / moveFrameTime);
-        if ((Input.GetKeyDown(KeyCode.W) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.UpArrow) && playerIndex == 1))
+        switch (Input.GetKeyDown(playerIndex == 0 ? KeyCode.W : KeyCode.UpArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.A : KeyCode.LeftArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.S : KeyCode.DownArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.D : KeyCode.RightArrow))
         {
-            direction = (Vector3.forward);
-            directionSpriteIndex = 15;
-        }
-        if ((Input.GetKeyDown(KeyCode.A) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.LeftArrow) && playerIndex == 1))
-        {
-            direction = (Vector3.left);
-            directionSpriteIndex = 5;
-        }
-        if ((Input.GetKeyDown(KeyCode.S) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.DownArrow) && playerIndex == 1))
-        {
-            direction = (Vector3.back);
-            directionSpriteIndex = 10;
+            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.W : KeyCode.UpArrow):
+                direction = Vector3.forward;
+                directionSpriteIndex = 15;
+                break;
 
-        }
-        if ((Input.GetKeyDown(KeyCode.D) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.RightArrow) && playerIndex == 1))
-        {
-            direction = (Vector3.right);
-            directionSpriteIndex = 0;
-        }
+            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.A : KeyCode.LeftArrow):
+                direction = Vector3.left;
+                directionSpriteIndex = 5;
+                break;
 
+            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.S : KeyCode.DownArrow):
+                direction = Vector3.back;
+                directionSpriteIndex = 10;
+                break;
+
+            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.D : KeyCode.RightArrow):
+                direction = Vector3.right;
+                directionSpriteIndex = 0;
+                break;
+        }
 
         RaycastHit target;
         if (keyPressed)
         {
+            lastPos = realtimeTargetPos;
             keyPressed = false;
             transform.position = realtimeTargetPos;
             if (!Physics.Raycast(realtimeTargetPos, direction, out target, 1))
@@ -175,49 +155,37 @@ public class playerMovement : MonoBehaviour
                     killPlayer();
             }
         }
-        
+
+        if (Physics.Raycast(realtimeTargetPos, direction, out RaycastHit hit) &&
+    hit.transform.TryGetComponent(out AIScript aiScript) && direction == aiScript.direction)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(realtimeTargetPos, direction, out hit))
+            drawLine(hit.point);
+            drawLine(hit.point + Vector3.up * 3);
+            drawLine(hit.point - Vector3.up * 3);
+            Instantiate(deadDog, hit.transform.position, Quaternion.identity);
+            Destroy(hit.transform.gameObject);
+        }
+        else if (Physics.Raycast(realtimeTargetPos, direction, out hit) &&
+                 hit.transform.TryGetComponent(out playerMovement player) &&
+                 player.gameObject.name != GetComponent<playerMovement>().gameObject.name &&
+                 direction == player.direction && !player.onion)
+        {
+            drawLine(hit.point);
+            drawLine(hit.point + Vector3.up * 3);
+            drawLine(hit.point - Vector3.up * 3);
+            var p = FindObjectOfType<pelletParticles>();
+            int score1 = p.score1, score2 = p.score2;
+            if (playerIndex == 0)
             {
-                if (hit.transform.gameObject.GetComponent<AIScript>())
-                {
-                    if (direction == hit.transform.gameObject.GetComponent<AIScript>().direction)
-                    {
-                        drawLine(hit.point);
-                        drawLine(hit.point+Vector3.up*3);
-                        drawLine(hit.point - Vector3.up*3);
-                        GameObject newCheck = Instantiate(deadDog);
-                        newCheck.transform.position = hit.transform.gameObject.transform.position;
-                        newCheck.transform.parent = null;
-                        Destroy(hit.transform.gameObject);
-                    }
-                }
-                else if (hit.transform.gameObject.GetComponent<playerMovement>())
-                {
-                    if (!(hit.transform.gameObject.GetComponent<playerMovement>().gameObject.name == GetComponent<playerMovement>().gameObject.name))
-                    {
-                        if (direction == hit.transform.gameObject.GetComponent<playerMovement>().direction && !hit.transform.gameObject.GetComponent<playerMovement>().onion)
-                        {
-                            drawLine(hit.point);
-                            drawLine(hit.point + Vector3.up*3);
-                            drawLine(hit.point - Vector3.up*3);
-                            pelletParticles p = FindObjectOfType<pelletParticles>();
-                            if (playerIndex == 0)
-                            {
-                                p.score1 += Mathf.FloorToInt(p.score2 / 5);
-                                p.score2 -= Mathf.FloorToInt(p.score2 / 5);
-                            }
-                            else if (playerIndex == 1)
-                            {
-                                p.score2 += Mathf.FloorToInt(p.score1 / 5);
-                                p.score1 -= Mathf.FloorToInt(p.score1 / 5);
-                            }
-                            hit.transform.gameObject.GetComponent<playerMovement>().killPlayer();
-                        }
-                    }
-                }
+                p.score1 += Mathf.FloorToInt(score2 / 5);
+                p.score2 -= Mathf.FloorToInt(score2 / 5);
             }
+            else if (playerIndex == 1)
+            {
+                p.score2 += Mathf.FloorToInt(score1 / 5);
+                p.score1 -= Mathf.FloorToInt(score1 / 5);
+            }
+            player.killPlayer();
         }
     }
 }
