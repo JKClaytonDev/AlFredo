@@ -144,14 +144,14 @@ public class playerMovement : MonoBehaviour
         {
             direction = (Vector3.back);
             directionSpriteIndex = 10;
-            
+
         }
         if ((Input.GetKeyDown(KeyCode.D) && playerIndex == 0) || (Input.GetKeyDown(KeyCode.RightArrow) && playerIndex == 1))
         {
             direction = (Vector3.right);
             directionSpriteIndex = 0;
         }
-        
+
 
         RaycastHit target;
         if (keyPressed)

@@ -129,8 +129,8 @@ public class phaseManager : MonoBehaviour
             {
                 lockInTime.text = "Pick your Taste Bud!";
                 selectStuff.SetActive(true);
-                p1Ready.text = "</> to Scroll, Down to Pick";
-                p2Ready.text = "A/D to Scroll, S to Pick";
+                p2Ready.text = "</> to Scroll, Down to Pick";
+                p1Ready.text = "A/D to Scroll, S to Pick";
                 if (Input.GetKeyDown(KeyCode.D))
                     p1ItemIndex++;
                 if (Input.GetKeyDown(KeyCode.A))

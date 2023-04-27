@@ -1,49 +1,31 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class aiManagerTool : MonoBehaviour
 {
-    public void MoveAll()
-    {
-        foreach (AIScript i in FindObjectsOfType<AIScript>())
-            i.updateAI();
-        Vector3[] positions = new Vector3[FindObjectsOfType<AIScript>().Length];
-        for (int i = 0; i<positions.Length; i++)
-        {
-            if (checkArrayContains(positions, FindObjectsOfType<AIScript>()[i].transform.position))
-                FindObjectsOfType<AIScript>()[i].updateAI();
-            positions[i] = FindObjectsOfType<AIScript>()[i].transform.position;
-        }
-    }
-    private void Start()
-    {
-        frameTime = FindObjectOfType<playerMovement>().frameTime;
-    }
-    float frameTime;
-    float moveTime;
-    int index;
+    float ft, mt;
+    int idx;
+    private void Start() => ft = FindObjectOfType<playerMovement>().frameTime;
     private void Update()
     {
-        if (Time.realtimeSinceStartup > moveTime)
+        if (Time.realtimeSinceStartup > mt)
         {
-            index++;
-            Debug.Log("PRESSED KEY");
+            idx++;
             MoveAll();
             foreach (playerMovement p in FindObjectsOfType<playerMovement>())
-            {
-                if (index%2 == 0 || p.pepper)
-                p.keyPressed = true;
-            }
-            moveTime = Time.realtimeSinceStartup + frameTime/2;
+                if (idx % 2 == 0 || p.pepper) p.keyPressed = true;
+            mt = Time.realtimeSinceStartup + ft / 2;
         }
-        }
-    public bool checkArrayContains(Vector3[] inV3, Vector3 check)
+    }
+    void MoveAll()
     {
-        foreach (Vector3 v in inV3){
-            if (v == check)
-                return true;
+        var aiScripts = FindObjectsOfType<AIScript>();
+        var positions = new Vector3[aiScripts.Length];
+        foreach (AIScript i in aiScripts) i.updateAI();
+        for (int i = 0; i < positions.Length; i++)
+        {
+            if (System.Array.Exists(positions, v => v == aiScripts[i].transform.position)) aiScripts[i].updateAI();
+            positions[i] = aiScripts[i].transform.position;
         }
-        return false;
     }
 }
