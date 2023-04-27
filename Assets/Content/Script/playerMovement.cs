@@ -9,7 +9,7 @@ public class playerMovement : MonoBehaviour
 {
     public float onionTime, pepperTime, frameTime = 0.3f, moveTime;
     public aiManagerTool AI;
-    public bool onion = false, pepper = false, dead, movingTarget = false, keyPressed, verticalFirst;
+    public bool onion, pepper, dead, movingTarget, keyPressed, verticalFirst;
     public int playerIndex, health = 10, directionSpriteIndex;
     public GameObject deadDog, onionObject;
     public Vector3 movingTargetPos, targetPos, realtimeTargetPos, dir = Vector3.left;
@@ -18,7 +18,7 @@ public class playerMovement : MonoBehaviour
     public AudioClip fireSound;
     Rigidbody mainBody;
     public LineRenderer l;
-    Vector3 direction, lastPos;
+    public Vector3 direction, lastPos;
 
     void Start()
     {
@@ -27,30 +27,36 @@ public class playerMovement : MonoBehaviour
         health = 10;
         mainBody = GetComponent<Rigidbody>();
         realtimeTargetPos = transform.position;
+        AI = FindObjectOfType<aiManagerTool>(true);
     }
+
     public void SetTarget(GameObject target, bool verticalFirstIn)
     {
         verticalFirst = verticalFirstIn;
         movingTarget = true;
         movingTargetPos = target.transform.position;
     }
+
     public void drawLine(Vector3 target)
     {
         int posCount = l.positionCount;
         l.positionCount = posCount + 4;
-        l.SetPosition(posCount, transform.position-Vector3.up*100);
-        l.SetPosition(posCount+1, transform.position);
-        l.SetPosition(posCount+2, target);
-        l.SetPosition(posCount+3, target - Vector3.up * 100);
+        l.SetPosition(posCount, transform.position - Vector3.up * 100);
+        l.SetPosition(posCount + 1, transform.position);
+        l.SetPosition(posCount + 2, target);
+        l.SetPosition(posCount + 3, target - Vector3.up * 100);
     }
+
     public void killPlayer()
     {
         FindObjectOfType<playerStatusManager>().PlayAnimation("Killed", playerIndex);
         dead = true;
         transform.position = movingTargetPos;
         realtimeTargetPos = transform.position;
+        lastPos = transform.position;
         targetPos = realtimeTargetPos;
     }
+
     void Update()
     {
         onionObject.SetActive(onion);
@@ -60,8 +66,7 @@ public class playerMovement : MonoBehaviour
         pos.y = -0.5f;
         transform.position = pos;
 
-        if (dead)
-            return;
+        if (dead) return;
 
         float spriteFrameTime = Time.realtimeSinceStartup * 10;
         float moveFrameTime = pepper ? frameTime * 0.5f : frameTime;
@@ -108,7 +113,7 @@ public class playerMovement : MonoBehaviour
             return;
         }
         Time.timeScale = 1;
-        transform.position = Vector3.MoveTowards(transform.position, realtimeTargetPos, Time.deltaTime / moveFrameTime);
+        transform.position = Vector3.Lerp(realtimeTargetPos, lastPos, (AI.mt-Time.realtimeSinceStartup)/ (AI.ft));
         switch (Input.GetKeyDown(playerIndex == 0 ? KeyCode.W : KeyCode.UpArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.A : KeyCode.LeftArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.S : KeyCode.DownArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.D : KeyCode.RightArrow))
         {
             case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.W : KeyCode.UpArrow):
@@ -136,12 +141,12 @@ public class playerMovement : MonoBehaviour
         if (keyPressed)
         {
             lastPos = realtimeTargetPos;
-            keyPressed = false;
+            keyPressed = false; 
             transform.position = realtimeTargetPos;
-            if (!Physics.Raycast(realtimeTargetPos, direction, out target, 1))
-            {
+            if (pepper && !Physics.Raycast(transform.position, direction, out target, 2))
+                realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction * 2).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction * 2).z));
+            else if (!Physics.Raycast(transform.position, direction, out target, 1))
                 realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction).z));
-            }
             else if (target.transform.gameObject.GetComponent<AIScript>())
             {
                 if (onion)

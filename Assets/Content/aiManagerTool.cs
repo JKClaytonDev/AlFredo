@@ -13,8 +13,8 @@ public class aiManagerTool : MonoBehaviour
             idx++;
             MoveAll();
             foreach (playerMovement p in FindObjectsOfType<playerMovement>())
-                if (idx % 2 == 0 || p.pepper) p.keyPressed = true;
-            mt = Time.realtimeSinceStartup + ft / 2;
+                p.keyPressed = true;
+            mt = Time.realtimeSinceStartup + ft;
         }
     }
     void MoveAll()
