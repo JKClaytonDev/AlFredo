@@ -6,7 +6,7 @@ public class PlayerCamera : MonoBehaviour
 {
     public float zoom = 30;
     bool frame1;
-
+    public float fireOffset;
     Vector3 orth = new Vector3();
     public GameObject p1;
     public GameObject p2;
@@ -20,7 +20,8 @@ public class PlayerCamera : MonoBehaviour
             pos1.z = pos1.z / Mathf.Abs(pos1.z) * 6.5f;
         pos1.y = transform.position.y;
 
-        transform.position = Vector3.MoveTowards(transform.position, pos1, 100 * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, pos1, 100 * Time.deltaTime)+(Vector3.right*fireOffset*Mathf.Sin(Time.realtimeSinceStartup*50)*0.1f);
+        fireOffset = Mathf.Max(0, fireOffset - Time.deltaTime * 10);
     }
 
 }

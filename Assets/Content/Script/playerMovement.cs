@@ -39,6 +39,7 @@ public class playerMovement : MonoBehaviour
 
     public void drawLine(Vector3 target)
     {
+        GetComponent<AudioSource>().PlayOneShot(fireSound, 0.1f);
         int posCount = l.positionCount;
         l.positionCount = posCount + 4;
         l.SetPosition(posCount, transform.position - Vector3.up * 100);
@@ -160,37 +161,39 @@ public class playerMovement : MonoBehaviour
                     killPlayer();
             }
         }
-
-        if (Physics.Raycast(realtimeTargetPos, direction, out RaycastHit hit) &&
-    hit.transform.TryGetComponent(out AIScript aiScript) && direction == aiScript.direction)
+        bool firing = (playerIndex == 0 && Input.GetKey(KeyCode.Q)) || (playerIndex == 1 && Input.GetKey("."));
+        if (firing)
         {
-            drawLine(hit.point);
-            drawLine(hit.point + Vector3.up * 3);
-            drawLine(hit.point - Vector3.up * 3);
-            Instantiate(deadDog, hit.transform.position, Quaternion.identity);
-            Destroy(hit.transform.gameObject);
-        }
-        else if (Physics.Raycast(realtimeTargetPos, direction, out hit) &&
-                 hit.transform.TryGetComponent(out playerMovement player) &&
-                 player.gameObject.name != GetComponent<playerMovement>().gameObject.name &&
-                 direction == player.direction && !player.onion)
-        {
-            drawLine(hit.point);
-            drawLine(hit.point + Vector3.up * 3);
-            drawLine(hit.point - Vector3.up * 3);
-            var p = FindObjectOfType<pelletParticles>();
-            int score1 = p.score1, score2 = p.score2;
-            if (playerIndex == 0)
+            if (Physics.Raycast(realtimeTargetPos, direction, out RaycastHit hit))
             {
-                p.score1 += Mathf.FloorToInt(score2 / 5);
-                p.score2 -= Mathf.FloorToInt(score2 / 5);
+                FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 1);
+                drawLine(hit.point);
+                drawLine(hit.point + Vector3.up * 3);
+                drawLine(hit.point - Vector3.up * 3);
+                if (hit.transform.TryGetComponent(out AIScript aiScript) && firing)
+                {
+                    FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 3);
+                    Instantiate(deadDog, hit.transform.position, Quaternion.identity);
+                    Destroy(hit.transform.gameObject);
+                }
+                if (hit.transform.TryGetComponent(out playerMovement player) && player.gameObject.name != GetComponent<playerMovement>().gameObject.name && firing && !player.onion)
+                {
+                    FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 5);
+                    var p = FindObjectOfType<pelletParticles>();
+                    int score1 = p.score1, score2 = p.score2;
+                    if (playerIndex == 0)
+                    {
+                        p.score1 += Mathf.FloorToInt(score2 / 5);
+                        p.score2 -= Mathf.FloorToInt(score2 / 5);
+                    }
+                    else if (playerIndex == 1)
+                    {
+                        p.score2 += Mathf.FloorToInt(score1 / 5);
+                        p.score1 -= Mathf.FloorToInt(score1 / 5);
+                    }
+                    player.killPlayer();
+                }
             }
-            else if (playerIndex == 1)
-            {
-                p.score2 += Mathf.FloorToInt(score1 / 5);
-                p.score1 -= Mathf.FloorToInt(score1 / 5);
-            }
-            player.killPlayer();
         }
     }
 }

@@ -22,6 +22,7 @@ public class pellet : MonoBehaviour
     {
         if (other.gameObject.GetComponent<playerMovement>())
         {
+            FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(0.2f, FindObjectOfType<PlayerCamera>().fireOffset);
             playerIndex = other.gameObject.GetComponent<playerMovement>().playerIndex;
             if (sausage)
                 Debug.Log("SAUSAGE INDEX IS " + playerIndex);
