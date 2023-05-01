@@ -58,7 +58,9 @@ public class phaseManager : MonoBehaviour
         ready2 = false;
         menu = true;
         startTime = -1;
+        v = FindObjectOfType<GameVersionManager>();
     }
+    GameVersionManager v;
     int menuStage = 0;
     float startTime;
     public Image p1Image;
@@ -100,18 +102,20 @@ public class phaseManager : MonoBehaviour
             
             if (menuStage == 0)
             {
-                if (!ready1 && (Input.GetKey(KeyCode.W)))
+                if (!ready1 && v.p1UpTap)
                 {
                     p1ReadyAnim.Play("Spawn");
                     ready1 = true;
                 }
-                if (!ready2 && (Input.GetKey(KeyCode.UpArrow)))
+                if (!ready2 && v.p2UpTap)
                 {
                     p2ReadyAnim.Play("Spawn");
                     ready2 = true;
                 }
                 if (ready1)
                     p1Ready.text = "Player 1 Ready";
+                else if (FindAnyObjectByType<GameVersionManager>().Android)
+                    p1Ready.text = "Player 1 press Up";
                 else
                     p1Ready.text = "Player 1 press W";
                 if (ready2)
@@ -130,14 +134,17 @@ public class phaseManager : MonoBehaviour
                 lockInTime.text = "Pick your Taste Bud!";
                 selectStuff.SetActive(true);
                 p2Ready.text = "</> to Scroll, Down to Pick";
-                p1Ready.text = "A/D to Scroll, S to Pick";
-                if (Input.GetKeyDown(KeyCode.D))
+                if (FindAnyObjectByType<GameVersionManager>().Android)
+                    p1Ready.text = "</> to Scroll, Down to Pick";
+                else
+                    p1Ready.text = "A/D to Scroll, S to Pick";
+                if (v.p1RightTap)
                     p1ItemIndex++;
-                if (Input.GetKeyDown(KeyCode.A))
+                if (v.p1LeftTap)
                     p1ItemIndex--;
-                if (Input.GetKeyDown(KeyCode.RightArrow))
+                if (v.p2RightTap)
                     p2ItemIndex++;
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                if (v.p2LeftTap)
                     p2ItemIndex--;
                 p1ItemIndex = Mathf.Min(p1ItemIndex, 1);
                 p2ItemIndex = Mathf.Min(p2ItemIndex, 1);
@@ -149,15 +156,17 @@ public class phaseManager : MonoBehaviour
                 p2ItemName.text = itemNames[p2ItemIndex];
                 p1Image.sprite = itemSprites[p1ItemIndex];
                 p2Image.sprite = itemSprites[p2ItemIndex];
-                if (Input.GetKeyDown(KeyCode.S))
+                if (v.p1DownTap)
                     ready1 = true;
-                if (Input.GetKeyDown(KeyCode.DownArrow))
+                if (v.p2DownTap)
                     ready2 = true;
-                if (Input.GetKeyDown(KeyCode.W))
+                if (v.p1UpTap)
                     ready1 = false;
-                if (Input.GetKeyDown(KeyCode.UpArrow))
+                if (v.p2UpTap)
                     ready2 = false;
-                if (ready1)
+                if (ready1 && (FindAnyObjectByType<GameVersionManager>().Android))
+                    p1Ready.text = "Up to go back";
+                else if (ready1)
                     p1Ready.text = "W to go back";
                 if (ready2)
                     p2Ready.text = "Up to go back";
@@ -206,7 +215,7 @@ public class phaseManager : MonoBehaviour
         endCanvas.SetActive(gameEnd);
         if (gameEnd)
         {
-            if (Input.GetKey(KeyCode.Space))
+            if (v.p1DownTap || v.p2DownTap)
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             player1Score.text = "Player 1 Score: " + p.score1;
             player2Score.text = "Player 2 Score: " + p.score2;

@@ -11,10 +11,11 @@ public class deadPlayerManager : MonoBehaviour
     float p1DeadTime;
     float p2DeadTime;
     public AudioClip dieSound;
+    GameVersionManager v;
     // Start is called before the first frame update
     void Start()
     {
-        
+        v = FindObjectOfType<GameVersionManager>();
     }
     public GameObject p1DeadText;
     public GameObject p2DeadText;
@@ -53,25 +54,25 @@ public class deadPlayerManager : MonoBehaviour
         if (Time.realtimeSinceStartup > PressTime)
         {
             bool pressed = false;
-            if (Input.GetKey(KeyCode.A) && p1PressIndex == -1)
+            if (v.p1LeftTap && p1PressIndex == -1)
             {
                 p1PressIndex = 1;
                 p1Presses++;
                 pressed = true;
             }
-            else if (Input.GetKey(KeyCode.D) && p1PressIndex != -1)
+            else if (v.p1RightTap && p1PressIndex != -1)
             {
                 p1PressIndex = -1;
                 p1Presses++;
                 pressed = true;
             }
-            if (Input.GetKey(KeyCode.RightArrow) && p2PressIndex == -1)
+            if (v.p2RightTap && p2PressIndex == -1)
             {
                 p2PressIndex = 1;
                 p2Presses++;
                 pressed = true;
             }
-            else if (Input.GetKey(KeyCode.LeftArrow) && p2PressIndex != -1)
+            else if (v.p2LeftTap && p2PressIndex != -1)
             {
                 p2PressIndex = -1;
                 p2Presses++;

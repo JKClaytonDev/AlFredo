@@ -19,9 +19,11 @@ public class playerMovement : MonoBehaviour
     Rigidbody mainBody;
     public LineRenderer l;
     public Vector3 direction, lastPos;
+    GameVersionManager v;
 
     void Start()
     {
+        v = FindObjectOfType<GameVersionManager>();
         direction = (Vector3.forward);
         targetPos = realtimeTargetPos;
         health = 10;
@@ -115,27 +117,51 @@ public class playerMovement : MonoBehaviour
         }
         Time.timeScale = 1;
         transform.position = Vector3.Lerp(realtimeTargetPos, lastPos, (AI.mt-Time.realtimeSinceStartup)/ (AI.ft));
-        switch (Input.GetKeyDown(playerIndex == 0 ? KeyCode.W : KeyCode.UpArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.A : KeyCode.LeftArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.S : KeyCode.DownArrow) || Input.GetKeyDown(playerIndex == 0 ? KeyCode.D : KeyCode.RightArrow))
+        if (playerIndex == 0)
         {
-            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.W : KeyCode.UpArrow):
+            if (v.p1UpTap)
+            {
                 direction = Vector3.forward;
                 directionSpriteIndex = 15;
-                break;
-
-            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.A : KeyCode.LeftArrow):
+            }
+            if (v.p1LeftTap)
+            {
                 direction = Vector3.left;
                 directionSpriteIndex = 5;
-                break;
-
-            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.S : KeyCode.DownArrow):
+            }
+            if (v.p1DownTap)
+            {
                 direction = Vector3.back;
                 directionSpriteIndex = 10;
-                break;
-
-            case true when Input.GetKeyDown(playerIndex == 0 ? KeyCode.D : KeyCode.RightArrow):
+            }
+            if (v.p1RightTap)
+            {
                 direction = Vector3.right;
                 directionSpriteIndex = 0;
-                break;
+            }
+        }
+        else
+        {
+            if (v.p2UpTap)
+            {
+                direction = Vector3.forward;
+                directionSpriteIndex = 15;
+            }
+            if (v.p2LeftTap)
+            {
+                direction = Vector3.left;
+                directionSpriteIndex = 5;
+            }
+            if (v.p2DownTap)
+            {
+                direction = Vector3.back;
+                directionSpriteIndex = 10;
+            }
+            if (v.p2RightTap)
+            {
+                direction = Vector3.right;
+                directionSpriteIndex = 0;
+            }
         }
 
         RaycastHit target;
@@ -161,9 +187,13 @@ public class playerMovement : MonoBehaviour
                     killPlayer();
             }
         }
-        bool firing = (playerIndex == 0 && Input.GetKey(KeyCode.Q)) || (playerIndex == 1 && Input.GetKey("."));
+        bool firing = (playerIndex == 0 && v.p1ShootTap) || (playerIndex == 1 && v.p2ShootTap);
         if (firing)
         {
+            if (playerIndex == 0)
+                v.p1ShootTap = false;
+            if (playerIndex == 1)
+                v.p2ShootTap = false;
             if (Physics.Raycast(realtimeTargetPos, direction, out RaycastHit hit))
             {
                 FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 1);
