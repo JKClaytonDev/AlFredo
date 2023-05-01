@@ -38,11 +38,11 @@ public class playerStatusManager : MonoBehaviour
         pepperColor.g -= subVar+0.3f;
         pepperColor.b -= subVar + 0.3f;
         pepperColor.a = 1;
-        if (p1.pepper)
+        if (Time.realtimeSinceStartup < p1.pepperTime)
             p1Sprite.color = (Color.white + pepperColor) * 0.5f;
         else
             p1Sprite.color = Color.white;
-        if (p2.pepper)
+        if (Time.realtimeSinceStartup < p2.pepperTime)
             p2Sprite.color = (Color.white + pepperColor) * 0.5f;
         else
             p2Sprite.color = Color.white;

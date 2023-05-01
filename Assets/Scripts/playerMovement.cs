@@ -5,11 +5,12 @@ using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 public class playerMovement : MonoBehaviour
 {
     public float onionTime, pepperTime, shroomTime, frameTime = 0.3f, moveTime;
     public aiManagerTool AI;
-    public bool onion, pepper, dead, movingTarget, keyPressed, verticalFirst;
+    public bool onion, dead, movingTarget, keyPressed, verticalFirst;
     public int playerIndex, health = 10, directionSpriteIndex;
     public GameObject deadDog, onionObject;
     public Vector3 movingTargetPos, targetPos, realtimeTargetPos, dir = Vector3.left;
@@ -23,214 +24,315 @@ public class playerMovement : MonoBehaviour
 
     void Start()
     {
+        // Get the game version manager
         v = FindObjectOfType<GameVersionManager>();
-        direction = (Vector3.forward);
-        targetPos = realtimeTargetPos;
-        health = 10;
-        mainBody = GetComponent<Rigidbody>();
+
+        // Set the initial direction
+        direction = Vector3.forward;
+
+        // Set the initial target position
         realtimeTargetPos = transform.position;
+        targetPos = realtimeTargetPos;
+
+        // Set the initial health
+        health = 10;
+
+        // Get the rigidbody component
+        mainBody = GetComponent<Rigidbody>();
+
+        // Get the AI manager tool
         AI = FindObjectOfType<aiManagerTool>(true);
     }
 
+    // Set the target for the object to move towards
     public void SetTarget(GameObject target, bool verticalFirstIn)
     {
+        // Set the movement direction based on the given boolean
         verticalFirst = verticalFirstIn;
-        movingTarget = true;
+
+        // Set the target and flag the object as moving towards it
         movingTargetPos = target.transform.position;
+        movingTarget = true;
     }
 
+    // Draw a line from the current position to the target position
     public void drawLine(Vector3 target)
     {
+        // Play a firing sound effect
         GetComponent<AudioSource>().PlayOneShot(fireSound, 0.1f);
+
+        // Add 4 positions to the line renderer
         int posCount = l.positionCount;
         l.positionCount = posCount + 4;
-        l.SetPosition(posCount, transform.position - Vector3.up * 100);
+
+        // Set the positions of the line renderer
+        Vector3 startPos = transform.position - Vector3.up * 100;
+        Vector3 endPos = target - Vector3.up * 100;
+        l.SetPosition(posCount, startPos);
         l.SetPosition(posCount + 1, transform.position);
         l.SetPosition(posCount + 2, target);
-        l.SetPosition(posCount + 3, target - Vector3.up * 100);
+        l.SetPosition(posCount + 3, endPos);
     }
 
+    // Kill the player and update its status
     public void killPlayer()
     {
+        // Play the "Killed" animation for the player
         FindObjectOfType<playerStatusManager>().PlayAnimation("Killed", playerIndex);
+
+        // Set the player's state to dead
         dead = true;
+
+        // Move the player to the target position and update some variables
         transform.position = movingTargetPos;
         realtimeTargetPos = transform.position;
         lastPos = transform.position;
         targetPos = realtimeTargetPos;
     }
 
-    void Update()
+    // Update the movement of an object towards a target position
+    void SetTransitionMovement()
     {
-        onionObject.SetActive(onion);
-        onion = Time.realtimeSinceStartup < onionTime;
-        pepper = Time.realtimeSinceStartup < pepperTime;
-        Vector3 pos = transform.position;
-        pos.y = -0.5f;
-        transform.position = pos;
+        // Remember the object's last position
+        Vector3 lastPos = transform.position;
 
-        if (dead) return;
-
-        float spriteFrameTime = Time.realtimeSinceStartup * 10;
-        float moveFrameTime = pepper ? frameTime * 0.5f : frameTime;
-        directionSprite.sprite = chefSprites[directionSpriteIndex + (int)(spriteFrameTime - (Mathf.Floor(spriteFrameTime / 4) * 4))];
-
-        if (movingTarget)
+        // If we're moving vertically first
+        if (verticalFirst)
         {
-            Vector3 lastPos = transform.position;
-            if (verticalFirst)
+            // Move towards the target position on the Z axis first
+            if (transform.position.z != movingTargetPos.z)
             {
-                if (transform.position.z != movingTargetPos.z)
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, movingTargetPos.z), Time.deltaTime / frameTime);
-                else if (transform.position.x != movingTargetPos.x)
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(movingTargetPos.x, transform.position.y, transform.position.z), Time.deltaTime / frameTime);
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    new Vector3(transform.position.x, transform.position.y, movingTargetPos.z),
+                    Time.deltaTime / frameTime
+                );
             }
-            else
+            // Once we reach the target Z position, move towards the target X position
+            else if (transform.position.x != movingTargetPos.x)
             {
-                if (transform.position.x != movingTargetPos.x)
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(movingTargetPos.x, transform.position.y, transform.position.z), Time.deltaTime / frameTime);
-                else if (transform.position.z != movingTargetPos.z)
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, movingTargetPos.z), Time.deltaTime / frameTime);
-            }
-
-            if (lastPos != transform.position)
-            {
-                direction = Vector3.Normalize(transform.position - lastPos);
-                if (lastPos.x < transform.position.x) //Right
-                    directionSpriteIndex = 0;
-                else if (lastPos.x > transform.position.x) //Left
-                    directionSpriteIndex = 5;
-                else if (lastPos.z > transform.position.z) //Down
-                    directionSpriteIndex = 10;
-                else if (lastPos.z < transform.position.z) //Up
-                    directionSpriteIndex = 15;
-            }
-
-            if (transform.position.x == movingTargetPos.x && transform.position.z == movingTargetPos.z)
-            {
-                Time.timeScale = 1;
-                movingTarget = false;
-                realtimeTargetPos = transform.position;
-                targetPos = realtimeTargetPos;
-            }
-            return;
-        }
-        Time.timeScale = 1;
-        transform.position = Vector3.Lerp(realtimeTargetPos, lastPos, (AI.mt-Time.realtimeSinceStartup)/ (AI.ft));
-        if (playerIndex == 0)
-        {
-            if (v.p1UpTap)
-            {
-                direction = Vector3.forward;
-                directionSpriteIndex = 15;
-            }
-            if (v.p1LeftTap)
-            {
-                direction = Vector3.left;
-                directionSpriteIndex = 5;
-            }
-            if (v.p1DownTap)
-            {
-                direction = Vector3.back;
-                directionSpriteIndex = 10;
-            }
-            if (v.p1RightTap)
-            {
-                direction = Vector3.right;
-                directionSpriteIndex = 0;
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    new Vector3(movingTargetPos.x, transform.position.y, transform.position.z),
+                    Time.deltaTime / frameTime
+                );
             }
         }
+        // If we're moving horizontally first
         else
         {
-            if (v.p2UpTap)
+            // Move towards the target position on the X axis first
+            if (transform.position.x != movingTargetPos.x)
             {
-                direction = Vector3.forward;
-                directionSpriteIndex = 15;
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    new Vector3(movingTargetPos.x, transform.position.y, transform.position.z),
+                    Time.deltaTime / frameTime
+                );
             }
-            if (v.p2LeftTap)
+            // Once we reach the target X position, move towards the target Z position
+            else if (transform.position.z != movingTargetPos.z)
             {
-                direction = Vector3.left;
-                directionSpriteIndex = 5;
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    new Vector3(transform.position.x, transform.position.y, movingTargetPos.z),
+                    Time.deltaTime / frameTime
+                );
             }
-            if (v.p2DownTap)
-            {
-                direction = Vector3.back;
-                directionSpriteIndex = 10;
-            }
-            if (v.p2RightTap)
-            {
-                direction = Vector3.right;
-                directionSpriteIndex = 0;
-            }
-
         }
-        //TODO: add 3rd item index for shrooms
-        if (Time.realtimeSinceStartup > shroomTime)
+
+        // If the object's position has changed, update its direction and sprite index
+        if (lastPos != transform.position)
         {
-            direction *= -1;
+            direction = Vector3.Normalize(transform.position - lastPos);
+            if (lastPos.x < transform.position.x)
+                directionSpriteIndex = 0; // Right
+            else if (lastPos.x > transform.position.x)
+                directionSpriteIndex = 5; // Left
+            else if (lastPos.z > transform.position.z)
+                directionSpriteIndex = 10; // Down
+            else if (lastPos.z < transform.position.z)
+                directionSpriteIndex = 15; // Up
         }
 
+        // If the object has reached the target position, reset some variables
+        if (transform.position.x == movingTargetPos.x && transform.position.z == movingTargetPos.z)
+        {
+            Time.timeScale = 1;
+            movingTarget = false;
+            realtimeTargetPos = transform.position;
+            targetPos = realtimeTargetPos;
+        }
+    }
+    // This function controls the movement of the player
+    void GameplayMovement()
+    {
+        // Set the time scale to normal
+        Time.timeScale = 1;
+        // Use linear interpolation to move the player to the target position
+        transform.position = Vector3.Lerp(realtimeTargetPos, lastPos, (AI.mt - Time.realtimeSinceStartup) / (AI.ft));
+
+        // Dictionary to map directions to their respective sprites and indices
+        Dictionary<(bool, bool, bool, bool), (Vector3, int)> directionMap = new Dictionary<(bool, bool, bool, bool), (Vector3, int)>
+{
+    {(true, false, false, false), (Vector3.forward, 15)},
+    {(false, true, false, false), (Vector3.left, 5)},
+    {(false, false, true, false), (Vector3.back, 10)},
+    {(false, false, false, true), (Vector3.right, 0)}
+};
+
+        // Check which player is active and get their input
+        if (playerIndex == 0 && (v.p1UpTap || v.p1LeftTap || v.p1DownTap || v.p1RightTap))
+        {
+            // Check the input against the direction map and set the direction and sprite index
+            foreach (var kvp in directionMap)
+            {
+                var (p1UpTap, p1LeftTap, p1DownTap, p1RightTap) = kvp.Key;
+                if (v.p1UpTap == p1UpTap && v.p1LeftTap == p1LeftTap && v.p1DownTap == p1DownTap && v.p1RightTap == p1RightTap)
+                {
+                    (direction, directionSpriteIndex) = kvp.Value;
+                    break;
+                }
+            }
+        }
+        else if (playerIndex == 1 && (v.p2UpTap || v.p2LeftTap || v.p2DownTap || v.p2RightTap))
+        {
+            // Check the input against the direction map and set the direction and sprite index
+            foreach (var kvp in directionMap)
+            {
+                var (p2UpTap, p2LeftTap, p2DownTap, p2RightTap) = kvp.Key;
+                if (v.p2UpTap == p2UpTap && v.p2LeftTap == p2LeftTap && v.p2DownTap == p2DownTap && v.p2RightTap == p2RightTap)
+                {
+                    (direction, directionSpriteIndex) = kvp.Value;
+                    break;
+                }
+            }
+        }
 
         RaycastHit target;
-        if (keyPressed)
+        // Check if a key has been pressed and move the player to the target position
+
+        if (keyPressed) // if a key was pressed
         {
-            lastPos = realtimeTargetPos;
-            keyPressed = false; 
-            transform.position = realtimeTargetPos;
-            if (pepper && !Physics.Raycast(transform.position, direction, out target, 2))
+            lastPos = realtimeTargetPos; // set last position to current position
+            keyPressed = false; // reset keyPressed flag
+            transform.position = realtimeTargetPos; // set current position to target position
+            if ((Time.realtimeSinceStartup < pepperTime) && !Physics.Raycast(transform.position, direction, out target, 2))
+            {
+                // if the pepper power-up is active and there is no collision within 2 units in the current direction
                 realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction * 2).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction * 2).z));
+            }
             else if (!Physics.Raycast(transform.position, direction, out target, 1))
+            {
+                // if there is no collision within 1 unit in the current direction
                 realtimeTargetPos = new Vector3(Mathf.Round((realtimeTargetPos + direction).x), realtimeTargetPos.y, Mathf.Round((realtimeTargetPos + direction).z));
+            }
             else if (target.transform.gameObject.GetComponent<AIScript>())
             {
-                if (onion)
+                // if there is a collision with an AI object
+                if (onion) // if the onion power-up is active
                 {
-                    GameObject newCheck = Instantiate(deadDog);
-                    newCheck.transform.position = target.transform.gameObject.transform.position;
-                    newCheck.transform.parent = null;
-                    Destroy(target.transform.gameObject);
+                    GameObject newCheck = Instantiate(deadDog); // create a new deadDog object
+                    newCheck.transform.position = target.transform.gameObject.transform.position; // set position of the new object to the position of the AI object
+                    newCheck.transform.parent = null; // remove the parent of the new object
+                    Destroy(target.transform.gameObject); // destroy the AI object
                 }
-                else
-                    killPlayer();
+                else // if the onion power-up is not active
+                {
+                    killPlayer(); // kill the player
+                }
             }
         }
-        bool firing = (playerIndex == 0 && v.p1ShootTap) || (playerIndex == 1 && v.p2ShootTap);
-        if (firing)
+    }
+
+    void PlayerCombat()
+    {
+        // Reset player shoot tap
+        if (playerIndex == 0)
+            v.p1ShootTap = false;
+        if (playerIndex == 1)
+            v.p2ShootTap = false;
+
+        // Perform raycast
+        if (Physics.Raycast(realtimeTargetPos, direction, out RaycastHit hit))
         {
-            if (playerIndex == 0)
-                v.p1ShootTap = false;
-            if (playerIndex == 1)
-                v.p2ShootTap = false;
-            if (Physics.Raycast(realtimeTargetPos, direction, out RaycastHit hit))
+            // Adjust camera fire offset
+            var playerCamera = FindObjectOfType<PlayerCamera>();
+            playerCamera.fireOffset = Mathf.Max(playerCamera.fireOffset, 1);
+
+            // Draw hit markers
+            drawLine(hit.point);
+            drawLine(hit.point + Vector3.up * 3);
+            drawLine(hit.point - Vector3.up * 3);
+
+            // Handle hit AI
+            if (hit.transform.TryGetComponent(out AIScript aiScript))
             {
-                FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 1);
-                drawLine(hit.point);
-                drawLine(hit.point + Vector3.up * 3);
-                drawLine(hit.point - Vector3.up * 3);
-                if (hit.transform.TryGetComponent(out AIScript aiScript) && firing)
-                {
-                    FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 3);
-                    Instantiate(deadDog, hit.transform.position, Quaternion.identity);
-                    Destroy(hit.transform.gameObject);
-                }
-                if (hit.transform.TryGetComponent(out playerMovement player) && player.gameObject.name != GetComponent<playerMovement>().gameObject.name && firing && !player.onion)
-                {
-                    FindObjectOfType<PlayerCamera>().fireOffset = Mathf.Max(FindObjectOfType<PlayerCamera>().fireOffset, 5);
-                    var p = FindObjectOfType<pelletParticles>();
-                    int score1 = p.score1, score2 = p.score2;
-                    if (playerIndex == 0)
-                    {
-                        p.score1 += Mathf.FloorToInt(score2 / 5);
-                        p.score2 -= Mathf.FloorToInt(score2 / 5);
-                    }
-                    else if (playerIndex == 1)
-                    {
-                        p.score2 += Mathf.FloorToInt(score1 / 5);
-                        p.score1 -= Mathf.FloorToInt(score1 / 5);
-                    }
-                    player.killPlayer();
-                }
+                // Adjust camera fire offset
+                playerCamera.fireOffset = Mathf.Max(playerCamera.fireOffset, 3);
+
+                // Spawn dead dog object and destroy hit AI
+                Instantiate(deadDog, hit.transform.position, Quaternion.identity);
+                Destroy(hit.transform.gameObject);
             }
+
+            // Handle hit player
+            if (hit.transform.TryGetComponent(out playerMovement player) && player.gameObject.name != GetComponent<playerMovement>().gameObject.name && !player.onion)
+            {
+                // Adjust camera fire offset
+                playerCamera.fireOffset = Mathf.Max(playerCamera.fireOffset, 5);
+
+                // Calculate and update scores
+                var pelletParticles = FindObjectOfType<pelletParticles>();
+                int score1 = pelletParticles.score1, score2 = pelletParticles.score2;
+                if (playerIndex == 0)
+                {
+                    pelletParticles.score1 += Mathf.FloorToInt(score2 / 5);
+                    pelletParticles.score2 -= Mathf.FloorToInt(score2 / 5);
+                }
+                else if (playerIndex == 1)
+                {
+                    pelletParticles.score2 += Mathf.FloorToInt(score1 / 5);
+                    pelletParticles.score1 -= Mathf.FloorToInt(score1 / 5);
+                }
+
+                // Kill the hit player
+                player.killPlayer();
+            }
+        }
+    }
+    void Update()
+    {
+        // Activate onion object if it's still within the onion time
+        onionObject.SetActive(Time.realtimeSinceStartup < onionTime);
+
+        // Set the player's position, keeping them at y = -0.5
+        transform.position = new Vector3(transform.position.x, -0.5f, transform.position.z);
+
+        // If the player is dead, exit early and do nothing
+        if (dead) return;
+
+        // Calculate the current sprite frame time and movement frame time
+        float spriteFrameTime = Time.realtimeSinceStartup * 10;
+        float moveFrameTime = (Time.realtimeSinceStartup < pepperTime) ? frameTime * 0.5f : frameTime;
+
+        // Set the direction sprite based on the sprite frame time and direction sprite index
+        directionSprite.sprite = chefSprites[directionSpriteIndex + (int)(spriteFrameTime - (Mathf.Floor(spriteFrameTime / 4) * 4))];
+
+        // If the player is currently moving towards a target, set the movement transition and return
+        if (movingTarget)
+        {
+            SetTransitionMovement();
+            return;
+        }
+
+        // Otherwise, handle regular gameplay movement
+        GameplayMovement();
+
+        // If the player has pressed the shoot button, handle player combat
+        if ((playerIndex == 0 && v.p1ShootTap) || (playerIndex == 1 && v.p2ShootTap))
+        {
+            PlayerCombat();
         }
     }
 }
