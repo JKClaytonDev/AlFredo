@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class playerMovement : MonoBehaviour
 {
-    public float onionTime, pepperTime, frameTime = 0.3f, moveTime;
+    public float onionTime, pepperTime, shroomTime, frameTime = 0.3f, moveTime;
     public aiManagerTool AI;
     public bool onion, pepper, dead, movingTarget, keyPressed, verticalFirst;
     public int playerIndex, health = 10, directionSpriteIndex;
@@ -162,7 +162,14 @@ public class playerMovement : MonoBehaviour
                 direction = Vector3.right;
                 directionSpriteIndex = 0;
             }
+
         }
+        //TODO: add 3rd item index for shrooms
+        if (Time.realtimeSinceStartup > shroomTime)
+        {
+            direction *= -1;
+        }
+
 
         RaycastHit target;
         if (keyPressed)

@@ -16,8 +16,13 @@ public class pepperItem : MonoBehaviour
                 itemIndex = FindObjectOfType<phaseManager>(false).p2ItemIndex;
             if (itemIndex == 1)
                 other.gameObject.GetComponent<playerMovement>().onionTime = Time.realtimeSinceStartup + 10;
-            else
+            else if (itemIndex == 2)
                 other.gameObject.GetComponent<playerMovement>().pepperTime = Time.realtimeSinceStartup + 10;
+            //TODO: add 3rd item index for shrooms
+            else if (itemIndex == 3)
+            {
+                other.gameObject.GetComponent<playerMovement>().shroomTime = Time.realtimeSinceStartup + 10;
+            }
             Destroy(gameObject);
         }
     }
