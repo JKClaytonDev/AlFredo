@@ -24,58 +24,19 @@ public class playerStatusManager : MonoBehaviour
     void Update()
     {
         float subVar = Mathf.Abs(Mathf.Sin(Time.realtimeSinceStartup * 5)) / 2;
-        Color pepperColor = new Color(1, 0.7f - subVar, 0.7f - subVar);
-        
-
-        if (Time.realtimeSinceStartup < p1.pepperTime)
-            p1Sprite.color = (Color.white + pepperColor) * 0.5f;
-        else
-            p1Sprite.color = Color.white;
-        if (Time.realtimeSinceStartup < p2.pepperTime)
-            p2Sprite.color = (Color.white + pepperColor) * 0.5f;
-        else
-            p2Sprite.color = Color.white;
-
-        
-        pepperColor = new Color(1, 1, pepperColor.r);
+        Color pepperColor = new Color(1, -subVar - 0.3f, -subVar - 0.3f, 1);
+        p1Sprite.color = (Time.realtimeSinceStartup < p1.pepperTime) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
+        p2Sprite.color = (Time.realtimeSinceStartup < p2.pepperTime) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
         p1Sprite.color *= (p1.onion) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
         p2Sprite.color *= (p2.onion) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
-
-        if (p.score2+10 < p.score1)
+        p1Sprite.sprite = (p1.dead) ? p1DeadSprite : ((p.score2 + 10 < p.score1) ? p1WinSprite : ((p.score1 == p.score2) ? p1TieSprite : p1Sprite.sprite));
+        p2Sprite.sprite = (p2.dead) ? p2DeadSprite : ((p.score1 + 10 < p.score2) ? p2WinSprite : ((p.score1 == p.score2) ? p2TieSprite : p2Sprite.sprite));
+        int currentWinnerIndex = (p.score1 > p.score2) ? 0 : ((p.score1 < p.score2) ? 1 : -1);
+        if (lastWinnerIndex != currentWinnerIndex)
         {
-            winnerIndex = 1;
-            p1Sprite.sprite = p1WinSprite;
-            p2Sprite.sprite = p2LoseSprite;
-        }
-        if (p.score1+10 < p.score2)
-        {
-            winnerIndex = 2;
-            p1Sprite.sprite = p1LoseSprite;
-            p2Sprite.sprite = p2WinSprite;
-        }
-        if (p.score1 == p.score2)
-        {
-            winnerIndex = -1;
-            p1Sprite.sprite = p1TieSprite;
-            p2Sprite.sprite = p2TieSprite;
-        }
-        if (p1.dead)
-            p1Sprite.sprite = p1DeadSprite;
-        if (p2.dead)
-            p2Sprite.sprite = p2DeadSprite;
-        if (lastWinnerIndex != winnerIndex)
-        {
-            lastWinnerIndex = winnerIndex;
-            if (p.score1 > p.score2)
-            {
-                PlayAnimation("RankDown", 0);
-                PlayAnimation("RankUp", 1);
-            }
-            if (p.score1 < p.score2)
-            {
-                PlayAnimation("RankUp", 0);
-                PlayAnimation("RankDown", 1);
-            }
+            lastWinnerIndex = currentWinnerIndex;
+            PlayAnimation((currentWinnerIndex == 0) ? "RankDown" : "RankUp", 0);
+            PlayAnimation((currentWinnerIndex == 1) ? "RankDown" : "RankUp", 1);
         }
     }
 }
