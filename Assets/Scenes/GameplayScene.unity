@@ -33831,21 +33831,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87ee318823cc3c648b0ca27d827ac117, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  p1Sprite: {fileID: 1156879494}
-  p2Sprite: {fileID: 1873069712}
-  p1WinSprite: {fileID: 21300000, guid: c13b72174c6593d458f973eb0d959602, type: 3}
-  p2WinSprite: {fileID: 21300000, guid: e42c397b5a9501a48bf0266576f5e4a4, type: 3}
-  p1LoseSprite: {fileID: 21300000, guid: 17d4333bbcf04414095cabdf86314181, type: 3}
-  p2LoseSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
-  p1TieSprite: {fileID: 21300000, guid: 8fda634ff4712104caf6bcfbcc90b10b, type: 3}
-  p2TieSprite: {fileID: 21300000, guid: 967a7786e690777478803cc933c0498e, type: 3}
-  p1DeadSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
-  p2DeadSprite: {fileID: 21300000, guid: 17d4333bbcf04414095cabdf86314181, type: 3}
-  p: {fileID: 1353092762}
+  p: {fileID: 0}
   p1: {fileID: 2075329034}
   p2: {fileID: 1430763566}
+  p1Sprite: {fileID: 1156879494}
+  p2Sprite: {fileID: 1873069712}
   playerAnim: {fileID: 1156879496}
   player2Anim: {fileID: 1873069714}
+  p1WinSprite: {fileID: 21300000, guid: e42c397b5a9501a48bf0266576f5e4a4, type: 3}
+  p2WinSprite: {fileID: 21300000, guid: 17d4333bbcf04414095cabdf86314181, type: 3}
+  p1LoseSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
+  p2LoseSprite: {fileID: 21300000, guid: 8fda634ff4712104caf6bcfbcc90b10b, type: 3}
+  p1TieSprite: {fileID: 21300000, guid: 967a7786e690777478803cc933c0498e, type: 3}
+  p2TieSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
+  p1DeadSprite: {fileID: 21300000, guid: 17d4333bbcf04414095cabdf86314181, type: 3}
+  p2DeadSprite: {fileID: 0}
 --- !u!4 &1009121979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3595116506392248991, guid: 9eb8cb24ae5de11408ec49b58d67a39f, type: 3}
@@ -69902,16 +69902,18 @@ MonoBehaviour:
   item1Mesh: {fileID: 1197698624}
   item2Mesh: {fileID: 1230893647}
   menu: 1
+  ready1: 0
+  ready2: 0
+  gameEnd: 0
+  phase: 1
+  lastPhase: 1
+  menuStage: 0
+  p1ItemIndex: 0
+  p2ItemIndex: 0
+  Timer: 0
+  startTime: 0
   gameCanvas: {fileID: 104542216}
   endCanvas: {fileID: 1546850271}
-  menuCanvas: {fileID: 164403597}
-  player1Score: {fileID: 857513551}
-  player2Score: {fileID: 1730144395}
-  winnerName: {fileID: 1043622494}
-  musicManager: {fileID: 652235848}
-  p: {fileID: 1353092762}
-  p1: {fileID: 2075329034}
-  p2: {fileID: 1430763566}
   phase1Object: {fileID: 2128429100}
   p1MoveTarget1: {fileID: 3595116507522769279}
   p2MoveTarget1: {fileID: 7993076887136096966}
@@ -69926,24 +69928,28 @@ MonoBehaviour:
   p2MoveTarget4: {fileID: 7993076885479527290}
   borders: {fileID: 158388622}
   bowl: {fileID: 1353092757}
-  c: {fileID: 963194233}
-  timer: {fileID: 1253619085}
-  Timer: 0
-  p1Ready: {fileID: 1189420095}
-  p2Ready: {fileID: 1169114579}
-  ready1: 0
-  ready2: 0
-  p1ReadyAnim: {fileID: 683032008}
-  p2ReadyAnim: {fileID: 1426391502}
   dialogue: {fileID: 1966470565}
   dialogueSuicide: {fileID: 1430095452}
   selectStuff: {fileID: 916883068}
-  p1Image: {fileID: 1695313235}
-  p2Image: {fileID: 1977060090}
+  menuCanvas: {fileID: 164403597}
+  player1Score: {fileID: 857513551}
+  player2Score: {fileID: 1730144395}
+  winnerName: {fileID: 1043622494}
+  timer: {fileID: 1253619085}
+  p1Ready: {fileID: 1189420095}
+  p2Ready: {fileID: 1169114579}
+  lockInTime: {fileID: 916883070}
   p1ItemText: {fileID: 1480781244}
   p2ItemText: {fileID: 1613553799}
   p1ItemName: {fileID: 2135309300}
   p2ItemName: {fileID: 1843900086}
+  musicManager: {fileID: 652235848}
+  p: {fileID: 1353092762}
+  p1: {fileID: 2075329034}
+  p2: {fileID: 1430763566}
+  c: {fileID: 963194233}
+  p1Image: {fileID: 1695313235}
+  p2Image: {fileID: 1977060090}
   itemSprites:
   - {fileID: 21300000, guid: d8b20eb554094e54fa1042e3a15c230e, type: 3}
   - {fileID: 21300000, guid: 24ca32d762e1d3a4eaacbacaced0b158, type: 3}
@@ -69953,9 +69959,8 @@ MonoBehaviour:
   itemDescriptions:
   - 2x speed upon activation
   - Cannot die during activation
-  lockInTime: {fileID: 916883070}
-  p1ItemIndex: 0
-  p2ItemIndex: 0
+  p1ReadyAnim: {fileID: 683032008}
+  p2ReadyAnim: {fileID: 1426391502}
 --- !u!1001 &2134547738
 PrefabInstance:
   m_ObjectHideFlags: 0
