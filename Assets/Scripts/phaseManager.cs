@@ -131,6 +131,8 @@ public class phaseManager : MonoBehaviour
             // ...call the SwapPhase() function.
             SwapPhase();
         }
+
+        isMovingTarget();
     }
     void MovingTarget()
     {
@@ -297,15 +299,11 @@ public class phaseManager : MonoBehaviour
         c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, bowl.transform.position + Vector3.up * 3, Time.deltaTime * 100);
     }
 
-
-    void SwapPhase()
+    public void isMovingTarget()
     {
         // create an array of move targets for player 1 and player 2
         GameObject[] p1MoveTargets = new GameObject[] { p1MoveTarget1, p1MoveTarget2, p1MoveTarget3, p1MoveTarget4 };
         GameObject[] p2MoveTargets = new GameObject[] { p2MoveTarget1, p2MoveTarget2, p2MoveTarget3, p2MoveTarget4 };
-
-        // store the current phase as the last phase
-        lastPhase = phase;
 
         // check if either player is moving and update the timer text accordingly
         bool isMovingTarget = p1.movingTarget || p2.movingTarget;
@@ -353,5 +351,12 @@ public class phaseManager : MonoBehaviour
             phase3Object.gameObject.SetActive(isSin ? Mathf.Sin(Time.realtimeSinceStartup * 10) > 0 : isCos);
             phase4Object.gameObject.SetActive(isSin ? Mathf.Cos(Time.realtimeSinceStartup * 10) > 0 : isCos);
         }
+    }
+    void SwapPhase()
+    {
+        
+        // store the current phase as the last phase
+        lastPhase = phase;
+
     }
 }
