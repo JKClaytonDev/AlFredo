@@ -27924,6 +27924,10 @@ PrefabInstance:
       propertyPath: onionObject
       value: 
       objectReference: {fileID: 1448574689}
+    - target: {fileID: 1877291291450344611, guid: 8fd2903092977364b8ade4bfd535d96a, type: 3}
+      propertyPath: otherPlayer
+      value: 
+      objectReference: {fileID: 1430763566}
     - target: {fileID: 1877291291450344613, guid: 8fd2903092977364b8ade4bfd535d96a, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -33839,13 +33843,13 @@ MonoBehaviour:
   playerAnim: {fileID: 1156879496}
   player2Anim: {fileID: 1873069714}
   p1WinSprite: {fileID: 21300000, guid: e42c397b5a9501a48bf0266576f5e4a4, type: 3}
-  p2WinSprite: {fileID: 21300000, guid: 17d4333bbcf04414095cabdf86314181, type: 3}
-  p1LoseSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
-  p2LoseSprite: {fileID: 21300000, guid: 8fda634ff4712104caf6bcfbcc90b10b, type: 3}
+  p2WinSprite: {fileID: 21300000, guid: c13b72174c6593d458f973eb0d959602, type: 3}
+  p1LoseSprite: {fileID: 21300000, guid: 442a13d3b372e3345907e71ce5ff2e39, type: 3}
+  p2LoseSprite: {fileID: 21300000, guid: 12f5560b441aba541841fb338bc8db08, type: 3}
   p1TieSprite: {fileID: 21300000, guid: 967a7786e690777478803cc933c0498e, type: 3}
-  p2TieSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
+  p2TieSprite: {fileID: 21300000, guid: 8fda634ff4712104caf6bcfbcc90b10b, type: 3}
   p1DeadSprite: {fileID: 21300000, guid: 17d4333bbcf04414095cabdf86314181, type: 3}
-  p2DeadSprite: {fileID: 0}
+  p2DeadSprite: {fileID: 21300000, guid: 9178989e68923a7488ecd5cd2f3d38f0, type: 3}
 --- !u!4 &1009121979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3595116506392248991, guid: 9eb8cb24ae5de11408ec49b58d67a39f, type: 3}
@@ -40006,6 +40010,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18297fcd72623714fb6dbe5be659b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  posMultiplier: 25
+  rotMultiplier: 5
+  positionPosMultiplier: 5
 --- !u!64 &1197698623
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -40327,6 +40334,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18297fcd72623714fb6dbe5be659b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  posMultiplier: 25
+  rotMultiplier: 5
+  positionPosMultiplier: 5
 --- !u!64 &1230893646
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -46037,6 +46047,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1385973328}
     - target: {fileID: 1877291291450344611, guid: 8fd2903092977364b8ade4bfd535d96a, type: 3}
+      propertyPath: otherPlayer
+      value: 
+      objectReference: {fileID: 2075329034}
+    - target: {fileID: 1877291291450344611, guid: 8fd2903092977364b8ade4bfd535d96a, type: 3}
       propertyPath: playerIndex
       value: 1
       objectReference: {fileID: 0}
@@ -46322,6 +46336,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18297fcd72623714fb6dbe5be659b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  posMultiplier: 1
+  rotMultiplier: 1
+  positionPosMultiplier: 10
 --- !u!114 &1430763566 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1877291291450344611, guid: 8fd2903092977364b8ade4bfd535d96a, type: 3}

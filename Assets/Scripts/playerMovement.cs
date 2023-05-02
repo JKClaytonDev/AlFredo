@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 public class playerMovement : MonoBehaviour
 {
+    public playerMovement otherPlayer;
     public float onionTime, pepperTime, shroomTime, frameTime = 0.3f, moveTime;
     public aiManagerTool AI;
     public bool onion, dead, movingTarget, keyPressed, verticalFirst;
@@ -194,6 +195,8 @@ public class playerMovement : MonoBehaviour
                     break;
                 }
             }
+            if (Time.realtimeSinceStartup < shroomTime)
+                direction *= -1;
         }
         else if (playerIndex == 1 && (v.p2UpTap || v.p2LeftTap || v.p2DownTap || v.p2RightTap))
         {
@@ -207,7 +210,11 @@ public class playerMovement : MonoBehaviour
                     break;
                 }
             }
+            if (Time.realtimeSinceStartup < shroomTime)
+                direction *= -1;
         }
+
+        
 
         RaycastHit target;
         // Check if a key has been pressed and move the player to the target position

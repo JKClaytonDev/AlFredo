@@ -14,6 +14,8 @@ public class AIScript : MonoBehaviour
         transform.forward = direction;
         transform.Rotate(0, 180, 0);
         Vector3 set = transform.forward;
+        if (turnOtherWay)
+            set = transform.right;
         transform.eulerAngles = new Vector3();
         int idx = set == Vector3.forward ? 0 : set == Vector3.left ? 1 : set == Vector3.back ? 2 : 3;
         foodSprite.sprite = foodSprites[idx];
@@ -22,7 +24,6 @@ public class AIScript : MonoBehaviour
 
     private void Start()
     {
-        if (turnOtherWay) transform.Rotate(0, -90, 0);
         realtimeTargetPos = transform.position;
         ft = FindObjectOfType<playerMovement>().frameTime;
         nextMovePos = realtimeTargetPos;

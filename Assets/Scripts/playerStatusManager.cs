@@ -8,6 +8,7 @@ public class playerStatusManager : MonoBehaviour
     public playerMovement p1, p2;
     public Image p1Sprite, p2Sprite;
     public Animator playerAnim, player2Anim;
+    Color rainbow = Color.red;
     public Sprite p1WinSprite, p2WinSprite, p1LoseSprite, p2LoseSprite, p1TieSprite, p2TieSprite, p1DeadSprite, p2DeadSprite;
     // Start is called before the first frame update
 
@@ -23,10 +24,13 @@ public class playerStatusManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float h, s, v;
+        Color.RGBToHSV(rainbow, out h, out s, out v);
+        rainbow = Color.HSVToRGB(h + Time.deltaTime, s, v);
         float subVar = Mathf.Abs(Mathf.Sin(Time.realtimeSinceStartup * 5)) / 2;
         Color pepperColor = new Color(1, -subVar - 0.3f, -subVar - 0.3f, 1);
-        p1Sprite.color = (Time.realtimeSinceStartup < p1.pepperTime) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
-        p2Sprite.color = (Time.realtimeSinceStartup < p2.pepperTime) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
+        p1Sprite.color = ((Time.realtimeSinceStartup < p1.shroomTime) ? rainbow : Color.white) * ((Time.realtimeSinceStartup < p1.pepperTime) ? ((Color.white + pepperColor) * 0.5f) : Color.white);
+        p2Sprite.color = ((Time.realtimeSinceStartup < p2.shroomTime) ? rainbow : Color.white) * ((Time.realtimeSinceStartup < p2.pepperTime) ? ((Color.white + pepperColor) * 0.5f) : Color.white);
         p1Sprite.color *= (p1.onion) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
         p2Sprite.color *= (p2.onion) ? ((Color.white + pepperColor) * 0.5f) : Color.white;
         p1Sprite.sprite = (p1.dead) ? p1DeadSprite : ((p.score2 + 10 < p.score1) ? p1WinSprite : ((p.score1 == p.score2) ? p1TieSprite : p1Sprite.sprite));
