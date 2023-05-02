@@ -69899,6 +69899,7 @@ MonoBehaviour:
   itemMats:
   - {fileID: 2100000, guid: d6ecd01c2b2a4cc46b9c36ffe9344b7b, type: 2}
   - {fileID: 2100000, guid: afc38e26110381a48854a81b6962e8f4, type: 2}
+  - {fileID: 2100000, guid: c5ae7520bb04acf40b8674b721f28385, type: 2}
   item1Mesh: {fileID: 1197698624}
   item2Mesh: {fileID: 1230893647}
   menu: 1
@@ -69953,12 +69954,15 @@ MonoBehaviour:
   itemSprites:
   - {fileID: 21300000, guid: d8b20eb554094e54fa1042e3a15c230e, type: 3}
   - {fileID: 21300000, guid: 24ca32d762e1d3a4eaacbacaced0b158, type: 3}
+  - {fileID: 21300000, guid: c9d732b17e299bd4a97812d6922ad9ca, type: 3}
   itemNames:
   - PEPPER PAL
   - ONION GUARD
+  - MAGIC SHROOM
   itemDescriptions:
   - 2x speed upon activation
   - Cannot die during activation
+  - Flip other player during activation
   p1ReadyAnim: {fileID: 683032008}
   p2ReadyAnim: {fileID: 1426391502}
 --- !u!1001 &2134547738

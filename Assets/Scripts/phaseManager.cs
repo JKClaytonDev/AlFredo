@@ -229,8 +229,8 @@ public class phaseManager : MonoBehaviour
             p2ItemIndex += v.p2RightTap ? 1 : (v.p2LeftTap ? -1 : 0);
 
             // Clamp the values of p1ItemIndex and p2ItemIndex to be between 0 and 1
-            p1ItemIndex = Mathf.Clamp(p1ItemIndex, 0, 1);
-            p2ItemIndex = Mathf.Clamp(p2ItemIndex, 0, 1);
+            p1ItemIndex = Mathf.Clamp(p1ItemIndex, 0, 2);
+            p2ItemIndex = Mathf.Clamp(p2ItemIndex, 0, 2);
 
             // Set the text of p1ItemText and p2ItemText to the item descriptions at the indexes of p1ItemIndex and p2ItemIndex respectively
             p1ItemText.text = itemDescriptions[p1ItemIndex];
