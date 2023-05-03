@@ -22,6 +22,8 @@ public class playerMovement : MonoBehaviour
     public LineRenderer l;
     public Vector3 direction, lastPos;
     GameVersionManager v;
+    public GameObject[] firstSpawns;
+    public GameObject[] secondSpawns;
 
     void Start()
     {
@@ -85,7 +87,7 @@ public class playerMovement : MonoBehaviour
         dead = true;
 
         // Move the player to the target position and update some variables
-        transform.position = movingTargetPos;
+        transform.position = secondSpawns[FindObjectOfType<phaseManager>().phase-1].transform.position;
         realtimeTargetPos = transform.position;
         lastPos = transform.position;
         targetPos = realtimeTargetPos;
@@ -119,7 +121,6 @@ public class playerMovement : MonoBehaviour
                 );
             }
         }
-        // If we're moving horizontally first
         else
         {
             // Move towards the target position on the X axis first
@@ -159,10 +160,17 @@ public class playerMovement : MonoBehaviour
         // If the object has reached the target position, reset some variables
         if (transform.position.x == movingTargetPos.x && transform.position.z == movingTargetPos.z)
         {
-            Time.timeScale = 1;
-            movingTarget = false;
-            realtimeTargetPos = transform.position;
-            targetPos = realtimeTargetPos;
+            if (otherPlayer.transform.position.x == otherPlayer.movingTargetPos.x && otherPlayer.transform.position.z == otherPlayer.movingTargetPos.z)
+            {
+                Time.timeScale = 1;
+                movingTarget = false;
+                realtimeTargetPos = transform.position;
+                targetPos = realtimeTargetPos;
+            }
+            else
+            {
+                transform.position = new Vector3(movingTargetPos.x, transform.position.y, movingTargetPos.z);
+            }
         }
     }
     // This function controls the movement of the player

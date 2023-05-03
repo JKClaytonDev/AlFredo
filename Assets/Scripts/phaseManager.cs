@@ -13,8 +13,7 @@ public class phaseManager : MonoBehaviour
     public GameObject gameCanvas, endCanvas, phase1Object, p1MoveTarget1, p2MoveTarget1,
     phase2Object, p1MoveTarget2, p2MoveTarget2, phase3Object, p1MoveTarget3, p2MoveTarget3,
     phase4Object, p1MoveTarget4, p2MoveTarget4, borders, bowl, dialogue, dialogueSuicide,
-    selectStuff;
-    public Canvas menuCanvas;
+    selectStuff, letsCook, menuCanvas, phase1Front, phase2Front, phase3Front, phase4Front;
     public Text player1Score, player2Score, winnerName, timer, p1Ready, p2Ready, lockInTime,
     p1ItemText, p2ItemText, p1ItemName, p2ItemName;
     public AudioSource musicManager;
@@ -26,7 +25,7 @@ public class phaseManager : MonoBehaviour
     public string[] itemNames, itemDescriptions;
     public Animator p1ReadyAnim, p2ReadyAnim, blackBarsCanvas;
     GameVersionManager v;
-
+    float phaseTime = 60;
     private void Start()
     {
         // Set the target position for player 1 to move to, and flag the move as immediate.
@@ -36,7 +35,7 @@ public class phaseManager : MonoBehaviour
         p2.SetTarget(p2MoveTarget4, true);
 
         // Calculate the current game phase based on the timer and round up to the nearest integer.
-        phase = Mathf.CeilToInt(Timer / 15);
+        phase = Mathf.CeilToInt(Timer / phaseTime);
 
         // Save the current game phase as the last phase for later comparison.
         lastPhase = phase;
@@ -57,6 +56,7 @@ public class phaseManager : MonoBehaviour
 
     void Update()
     {
+        letsCook.SetActive(false);
         // Set the material for the first player's item mesh based on their current item index.
         item1Mesh.material = itemMats[p1ItemIndex];
 
@@ -123,7 +123,7 @@ public class phaseManager : MonoBehaviour
         }
 
         // Calculate the current game phase based on the timer and round up to the nearest integer.
-        phase = Mathf.CeilToInt(Timer / 60);
+        phase = Mathf.CeilToInt(Timer / phaseTime);
 
         // If the game phase has changed since the last frame...
         if (lastPhase != phase)
@@ -182,6 +182,7 @@ public class phaseManager : MonoBehaviour
         // If the game is scheduled to start at a specific time...
         if (startTime != -1)
         {
+            letsCook.SetActive(true);
             // ...display a countdown timer indicating how long until the game starts.
             lockInTime.text = "Starting in " + Mathf.CeilToInt(startTime - Time.realtimeSinceStartup);
         }
@@ -308,54 +309,47 @@ public class phaseManager : MonoBehaviour
 
         // check if either player is moving and update the timer text accordingly
         bool isMovingTarget = p1.movingTarget || p2.movingTarget;
-        timer.text = isMovingTarget ? "" : "Time: " + (int)(((phase) * 60) - Timer);
-
+        timer.text = isMovingTarget ? "" : "Time: " + (int)(((phase) * phaseTime) - Timer);
+        phase1Front.gameObject.SetActive(phase == 1);
+        phase2Front.gameObject.SetActive(phase == 2);
+        phase3Front.gameObject.SetActive(phase == 3);
+        phase4Front.gameObject.SetActive(phase == 4);
+        phase1Object.SetActive(phase == 1 && !isMovingTarget);
+        phase2Object.SetActive(phase == 2 && !isMovingTarget);
+        phase3Object.SetActive(phase == 3 && !isMovingTarget);
+        phase4Object.SetActive(phase == 4 && !isMovingTarget);
         // if neither player is moving, update the objects related to the current phase and return
-        if (!isMovingTarget)
-        {
-            phase1Object.gameObject.SetActive(phase == 1);
-            phase2Object.gameObject.SetActive(phase == 2);
-            phase3Object.gameObject.SetActive(phase == 3);
-            phase4Object.gameObject.SetActive(phase == 4);
-            return;
-        }
-
-        // determine the target index based on the current phase
-        int targetIndex = phase - 1;
-
-        // set the target for each player based on the target index
-        // the target index determines whether the player should move to an even or odd target in the array
-        p1.SetTarget(targetIndex % 2 == 0 ? p1MoveTargets[targetIndex] : p1MoveTargets[targetIndex], targetIndex % 2 == 1);
-        p2.SetTarget(targetIndex % 2 == 0 ? p2MoveTargets[targetIndex] : p2MoveTargets[targetIndex], targetIndex % 2 == 1);
-
-        // if the current phase is 4, set gameEnd to true
-        gameEnd = phase == 4;
-
-        // update the objects related to the current phase
-        phase1Object.gameObject.SetActive(phase == 1 || phase == 2);
-        phase2Object.gameObject.SetActive(phase == 2 || phase == 3);
-        phase3Object.gameObject.SetActive(phase == 3 || phase == 4);
-        phase4Object.gameObject.SetActive(phase == 4 || phase == 1);
-
         // if the current phase is 0, show only the first phase object
         if (phase == 0)
         {
             phase1Object.gameObject.SetActive(true);
+            phase1Front.gameObject.SetActive(true);
         }
-        // if the current phase is between 1 and 4, update the objects based on whether the phase is odd or even
-        else if (phase > 0 && phase < 5)
-        {
-            bool isSin = phase % 2 == 1;
-            bool isCos = phase % 2 == 0;
-            phase1Object.gameObject.SetActive(isSin ? Mathf.Sin(Time.realtimeSinceStartup * 10) > 0 : isCos);
-            phase2Object.gameObject.SetActive(isSin ? Mathf.Cos(Time.realtimeSinceStartup * 10) > 0 : isCos);
-            phase3Object.gameObject.SetActive(isSin ? Mathf.Sin(Time.realtimeSinceStartup * 10) > 0 : isCos);
-            phase4Object.gameObject.SetActive(isSin ? Mathf.Cos(Time.realtimeSinceStartup * 10) > 0 : isCos);
-        }
+        
     }
     void SwapPhase()
     {
-        
+        if (lastPhase == 1)
+        {
+            p1.SetTarget(p1MoveTarget1, false);
+            p2.SetTarget(p2MoveTarget1, false);
+        }
+        if (lastPhase == 2)
+        {
+            p1.SetTarget(p1MoveTarget2, true);
+            p2.SetTarget(p2MoveTarget2, true);
+        }
+        if (lastPhase == 3)
+        {
+            p1.SetTarget(p1MoveTarget3, false);
+            p2.SetTarget(p2MoveTarget3, false);
+        }
+        if (lastPhase == 4)
+        {
+            p1.SetTarget(p1MoveTarget4, true);
+            p2.SetTarget(p2MoveTarget4, true);
+            gameEnd = true;
+        }
         // store the current phase as the last phase
         lastPhase = phase;
 

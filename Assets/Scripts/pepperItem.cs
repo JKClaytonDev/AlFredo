@@ -15,9 +15,9 @@ public class pepperItem : MonoBehaviour
             if (other.gameObject.GetComponent<playerMovement>().playerIndex == 1)
                 itemIndex = FindObjectOfType<phaseManager>(false).p2ItemIndex;
             if (itemIndex == 0)
-                other.gameObject.GetComponent<playerMovement>().onionTime = Time.realtimeSinceStartup + 10;
-            else if (itemIndex == 1)
                 other.gameObject.GetComponent<playerMovement>().pepperTime = Time.realtimeSinceStartup + 10;
+            else if (itemIndex == 1)
+                other.gameObject.GetComponent<playerMovement>().onionTime = Time.realtimeSinceStartup + 10;
             else if (itemIndex == 2)
             {
                 other.gameObject.GetComponent<playerMovement>().otherPlayer.shroomTime = Time.realtimeSinceStartup + 10;
