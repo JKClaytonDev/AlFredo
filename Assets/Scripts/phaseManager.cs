@@ -24,7 +24,7 @@ public class phaseManager : MonoBehaviour
     public Image p1Image, p2Image;
     public Sprite[] itemSprites;
     public string[] itemNames, itemDescriptions;
-    public Animator p1ReadyAnim, p2ReadyAnim;
+    public Animator p1ReadyAnim, p2ReadyAnim, blackBarsCanvas;
     GameVersionManager v;
 
     private void Start()
@@ -191,6 +191,7 @@ public class phaseManager : MonoBehaviour
         {
             // ...exit the menu and resume the game.
             menu = false;
+            blackBarsCanvas.Play("CanvasTransitionAnim");
             startTime = -1;
         }
     }

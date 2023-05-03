@@ -5,8 +5,9 @@ using UnityEngine.UI;
 public class GameVersionManager : MonoBehaviour
 {
     public bool Android, p1LeftTap, p2LeftTap, p1RightTap, p2RightTap, p1UpTap, p2UpTap, p1DownTap, p2DownTap, p1ShootTap, p2ShootTap;
-    public GameObject mobileUI;
+    public GameObject mobileUI, joystickUI;
     public Text p1DeadText;
+    public bool fightStick;
     private void Start()
     {
         if (Android)
@@ -16,8 +17,9 @@ public class GameVersionManager : MonoBehaviour
     }
     private void Update()
     {
+        joystickUI.SetActive(fightStick);
         // Check if the platform is Android
-        switch (Android)
+        switch (Android && !fightStick)
         {
             // If it is, enable the mobile UI and exit the method
             case true:
