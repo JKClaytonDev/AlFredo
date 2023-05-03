@@ -40726,6 +40726,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18297fcd72623714fb6dbe5be659b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  posMultiplier: 1
+  rotMultiplier: 1
+  positionPosMultiplier: 10
 --- !u!64 &1197698623
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -41047,6 +41050,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18297fcd72623714fb6dbe5be659b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  posMultiplier: 1
+  rotMultiplier: 1
+  positionPosMultiplier: 10
 --- !u!64 &1230893646
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -47115,6 +47121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18297fcd72623714fb6dbe5be659b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  posMultiplier: 1
+  rotMultiplier: 1
+  positionPosMultiplier: 10
 --- !u!114 &1430763566 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1877291291450344611, guid: 8fd2903092977364b8ade4bfd535d96a, type: 3}
