@@ -24,8 +24,8 @@ public class deadPlayerManager : MonoBehaviour
     public int p1PressIndex = -1;
     public int p2PressIndex = -1;
     float PressTime;
-    int p1Presses;
-    int p2Presses;
+    float p1Presses;
+    float p2Presses;
     // Update is called once per frame
     void Update()
     {
@@ -33,10 +33,24 @@ public class deadPlayerManager : MonoBehaviour
         p2DeadText.gameObject.SetActive(p2.dead);
         p1DeadBar.transform.localScale = new Vector3(((float)(p1Presses+1)) / 11, 1, 1);
         p2DeadBar.transform.localScale = new Vector3(((float)(p2Presses+1)) / 11, 1, 1);
-        if (p1.movingTarget)
+        if (p1.movingTarget && p1.dead)
+        {
             p1.dead = false;
-        if (p2.movingTarget)
+            {
+                GameObject aliveSpawn = Instantiate(p1.lifeSpawn);
+                aliveSpawn.transform.parent = null;
+                aliveSpawn.transform.position = p1.transform.position;
+            }
+        }
+        if (p2.movingTarget && p2.dead)
+        {
             p2.dead = false;
+            {
+                GameObject aliveSpawn = Instantiate(p2.lifeSpawn);
+                aliveSpawn.transform.parent = null;
+                aliveSpawn.transform.position = p2.transform.position;
+            }
+        }
         p1.gameObject.SetActive(!p1.dead);
         p2.gameObject.SetActive(!p2.dead);
         if (p1.dead && !lastp1DeadCheck)
@@ -51,6 +65,10 @@ public class deadPlayerManager : MonoBehaviour
             p2DeadTime = Time.realtimeSinceStartup + 5;
             GetComponent<AudioSource>().PlayOneShot(dieSound);
         }
+        if (p1.dead)
+            p1Presses += Time.deltaTime * 5;
+        if (p2.dead)
+            p2Presses += Time.deltaTime * 5;
         if (Time.realtimeSinceStartup > PressTime)
         {
             bool pressed = false;
@@ -86,11 +104,21 @@ public class deadPlayerManager : MonoBehaviour
         if (p1.dead && p1Presses > 10)
         {
             p1.dead = false;
+            {
+                GameObject aliveSpawn = Instantiate(p1.lifeSpawn);
+                aliveSpawn.transform.parent = null;
+                aliveSpawn.transform.position = p1.transform.position;
+            }
             FindObjectOfType<playerStatusManager>().PlayAnimation("BackAlive", 0);
         }
         if (p2.dead && p2Presses > 10)
         {
             p2.dead = false;
+            {
+                GameObject aliveSpawn = Instantiate(p2.lifeSpawn);
+                aliveSpawn.transform.parent = null;
+                aliveSpawn.transform.position = p2.transform.position;
+            }
             FindObjectOfType<playerStatusManager>().PlayAnimation("BackAlive", 1);
         }
         lastp1DeadCheck = p1.dead;

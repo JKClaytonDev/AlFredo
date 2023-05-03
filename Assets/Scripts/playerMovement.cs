@@ -24,6 +24,7 @@ public class playerMovement : MonoBehaviour
     GameVersionManager v;
     public GameObject[] firstSpawns;
     public GameObject[] secondSpawns;
+    public GameObject deathSpawn, lifeSpawn;
 
     void Start()
     {
@@ -80,14 +81,21 @@ public class playerMovement : MonoBehaviour
     // Kill the player and update its status
     public void killPlayer()
     {
+        if (onionTime > Time.realtimeSinceStartup)
+            return;
         // Play the "Killed" animation for the player
         FindObjectOfType<playerStatusManager>().PlayAnimation("Killed", playerIndex);
-
+        GameObject killedSpawn = Instantiate(deathSpawn);
+        killedSpawn.transform.parent = null;
+        killedSpawn.transform.position = transform.position;
         // Set the player's state to dead
         dead = true;
 
         // Move the player to the target position and update some variables
-        transform.position = secondSpawns[FindObjectOfType<phaseManager>().phase-1].transform.position;
+        if (UnityEngine.Random.value > 0.5)
+            transform.position = secondSpawns[FindObjectOfType<phaseManager>().phase - 1].transform.position;
+        else
+            transform.position = movingTargetPos;
         realtimeTargetPos = transform.position;
         lastPos = transform.position;
         targetPos = realtimeTargetPos;
