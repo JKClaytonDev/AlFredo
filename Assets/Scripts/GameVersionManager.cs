@@ -17,6 +17,8 @@ public class GameVersionManager : MonoBehaviour
     }
     private void Update()
     {
+        if (Input.GetKey(KeyCode.Escape))
+            Application.Quit();
         joystickUI.SetActive(fightStick);
         // Check if the platform is Android
         switch (Android && !fightStick)
@@ -28,17 +30,17 @@ public class GameVersionManager : MonoBehaviour
             // If it's not Android, disable the mobile UI and check for keyboard input
             default:
                 mobileUI.SetActive(false);
-                p1LeftTap = Input.GetKeyDown(KeyCode.A);
-                p1RightTap = Input.GetKeyDown(KeyCode.D);
-                p1UpTap = Input.GetKeyDown(KeyCode.W);
-                p1DownTap = Input.GetKeyDown(KeyCode.S);
-                p1ShootTap = Input.GetKeyDown(KeyCode.Q);
+                p1LeftTap = Input.GetKeyDown(KeyCode.LeftArrow);
+                p1RightTap = Input.GetKeyDown(KeyCode.RightArrow);
+                p1UpTap = Input.GetKeyDown(KeyCode.UpArrow);
+                p1DownTap = Input.GetKeyDown(KeyCode.DownArrow);
+                p1ShootTap = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.V) || Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.Space);
 
-                p2LeftTap = Input.GetKeyDown(KeyCode.LeftArrow);
-                p2RightTap = Input.GetKeyDown(KeyCode.RightArrow);
-                p2UpTap = Input.GetKeyDown(KeyCode.UpArrow);
-                p2DownTap = Input.GetKeyDown(KeyCode.DownArrow);
-                p2ShootTap = Input.GetKeyDown(KeyCode.Period);
+                p2LeftTap = Input.GetKeyDown(KeyCode.D);
+                p2RightTap = Input.GetKeyDown(KeyCode.G);
+                p2UpTap = Input.GetKeyDown(KeyCode.R);
+                p2DownTap = Input.GetKeyDown(KeyCode.F);
+                p2ShootTap = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.I);
                 break;
         }
     }
